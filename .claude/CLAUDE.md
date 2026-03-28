@@ -10,6 +10,10 @@ Stage D: Deterministic flag derivation from Big Five scores + CV rubric output. 
 Stage E: 3 parallel evaluation agents + audit + synthesis (4 LLM calls).
 Backend only. No frontend yet. No web framework during build — pure Python packages + Pydantic contracts.
 
+## Reference Specs (read-only, do not modify)
+
+`docs/specs/` contains the original stage design documents. Consult when `.agent/` files lack context for an implementation decision. Do not treat as task lists — use `.agent/tasks.md` for that.
+
 ## Before Doing Anything
 
 1. Read `.orchestrator/status.md` — know where the project stands.
