@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 class BigFiveScores(BaseModel):
     """OCEAN scores, each 0.0 to 1.0."""
 
-    O: float = Field(ge=0.0, le=1.0, description="Openness")
+    O: float = Field(ge=0.0, le=1.0, description="Openness")  # noqa: E741
     C: float = Field(ge=0.0, le=1.0, description="Conscientiousness")
     E: float = Field(ge=0.0, le=1.0, description="Extraversion")
     A: float = Field(ge=0.0, le=1.0, description="Agreeableness")
@@ -27,5 +27,8 @@ class CandidateData(BaseModel):
     name: str
     cv_text: str = Field(description="Raw CV text — ground truth for F04 validation")
     big_five: BigFiveScores | None = Field(default=None)
-    personality_source: str | None = Field(default=None, description="'manual', 'Preset — {name}', 'Modified preset — {name}'")
+    personality_source: str | None = Field(
+        default=None,
+        description="'manual', 'Preset — {name}', 'Modified preset — {name}'",
+    )
     team_context: list[TeamMember] = Field(default_factory=list)

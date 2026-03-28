@@ -1,11 +1,13 @@
 """Pipeline inter-stage data containers."""
 
 from enum import StrEnum
+
 from pydantic import BaseModel, Field
+
+from shared.models.candidates import CandidateData
+from shared.models.flags import Flag
 from shared.models.requirements import Requirement
 from shared.models.rubric import RubricAssessment
-from shared.models.flags import Flag
-from shared.models.candidates import CandidateData
 from shared.models.scenarios import ScenarioConfig
 
 

@@ -1,6 +1,7 @@
 """JD requirement extraction models. Produced by Stage C1, consumed by C2/C3/C4/D/E."""
 
 from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
 
@@ -29,5 +30,7 @@ class Requirement(BaseModel):
     requirement_id: str = Field(description="Sequential ID: REQ-01 through REQ-N")
     text: str = Field(max_length=200, description="Normalized requirement statement")
     source_quote: str = Field(max_length=300, description="Verbatim or near-verbatim from JD")
-    assessable_from_cv: bool = Field(description="False for behavioral requirements, true otherwise. LLM assigns during extraction.")
+    assessable_from_cv: bool = Field(
+        description="False for behavioral requirements, true otherwise. LLM assigns during extraction."
+    )
     scenario_priority: ScenarioPriority = Field(description="LLM assigns priority per scenario during C1 extraction")

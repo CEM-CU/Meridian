@@ -1,6 +1,7 @@
 """CV rubric assessment models. Produced by Stage C3, consumed by C4/D/E."""
 
 from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
 
@@ -19,7 +20,7 @@ class Confidence(StrEnum):
 
 
 class RubricAssessment(BaseModel):
-    """Single rubric evaluation: one requirement × one candidate."""
+    """Single rubric evaluation: one requirement x one candidate."""
 
     requirement_id: str
     candidate_name: str
@@ -28,4 +29,6 @@ class RubricAssessment(BaseModel):
     cv_citation: str | None = Field(default=None, description="Specific CV passage. Required for EXCEEDS/MEETS/PARTIAL")
     cv_location: str | None = Field(default=None, description="Role name, section, or paragraph reference")
     notes: str | None = Field(default=None, description="Assessor notes, recency concerns, conflicts")
-    investigation_question: str | None = Field(default=None, description="Specific question for GAP/PARTIAL/low-confidence")
+    investigation_question: str | None = Field(
+        default=None, description="Specific question for GAP/PARTIAL/low-confidence"
+    )
