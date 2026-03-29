@@ -1,6 +1,6 @@
 # Stage E — Task List
 
-> last_updated: 2026-03-29T00:00:00Z by agent (E4 done)
+> last_updated: 2026-03-29T16:00:00Z by agent (E5 done)
 
 ## Overview
 
@@ -8,7 +8,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
 
 ## Tasks (ordered by dependency)
 
-### E1: Layer 0 — Stage D Output Validation [NOT STARTED]
+### E1: Layer 0 — Stage D Output Validation [DONE]
 - **Blocked by:** StageDOutput contract (shared models)
 - **Input:** StageDOutput
 - **Output:** validated StageDOutput (bad flags stripped, issues logged)
@@ -20,7 +20,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - Fail-open: strip offending flags, log, proceed with clean subset. Never block pipeline
 - **Tests:** Valid input passes unchanged. Flag with unknown name → stripped. Flag missing required metadata → stripped. Invalid requirement_id reference → stripped.
 
-### E2: Layer 1 — Scenario Weights + Signal Computation [NOT STARTED]
+### E2: Layer 1 — Scenario Weights + Signal Computation [DONE]
 - **Blocked by:** E1
 - **Input:** validated flag set + ScenarioConfig
 - **Output:** weighted flags + signal-strength labels + risk bands + tension map
@@ -33,7 +33,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - Tension map: identify flag pairs creating interpretive tension within a candidate. v4.2 adds cross-stream tensions (positive CV + negative personality on same domain). Domain matching via lookup: experience_depth/scope→EXECUTION, technical→STRATEGIC, leadership_context→STRATEGIC/EXECUTION, geographic/industry→CULTURAL
 - **Tests:** Verify weight application is correct per scenario. Verify F02 — signal labels not in agent input structure. Tension map detects cross-stream tension. Partial mode noted correctly.
 
-### E3: Layer 2 — Agent Prompts (×3) [NOT STARTED]
+### E3: Layer 2 — Agent Prompts (×3) [DONE]
 - **Blocked by:** E2 (tension map), flag allowlist definitions
 - **Input per agent:** filtered flag subset (via allowlist) + tension map + candidate data + requirement list + assessment mode
 - **Output per agent:** JSON verdict with claims, each carrying evidence_basis
@@ -58,7 +58,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - Strict validation: unknown evidence types rejected, missing fields rejected
 - **Tests:** Valid agent JSON parses correctly. Missing evidence_basis → rejected. Unknown evidence type → rejected.
 
-### E5: Layer 3 — Audit (8 Checks) [NOT STARTED]
+### E5: Layer 3 — Audit (8 Checks) [DONE]
 - **Blocked by:** E3 + E4
 - **Input:** 3 agent verdicts + flag set + requirement list + candidate data (with raw CV text)
 - **Output:** audited verdicts with warnings/stripped claims
@@ -108,7 +108,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - Live switch: ~10-13s (3 agent calls + 1 synthesis call)
 - **Tests:** Two scenarios produce different outputs from same input. Cached output matches live computation.
 
-### E9: Timeout + Graceful Degradation (F16) [NOT STARTED]
+### E9: Timeout + Graceful Degradation (F16) [DONE]
 - **Blocked by:** E3
 - **Implementation:**
   - Per-agent timeout: 15s. On timeout: partial output with fallback notice

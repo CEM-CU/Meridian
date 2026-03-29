@@ -1,6 +1,6 @@
 # Project Status
 
-> last_updated: 2026-03-29T09:00:00Z by agent (D integration test complete)
+> last_updated: 2026-03-29T16:00:00Z by agent (E5 Layer 3 audit done — 8 checks, runner, 44 tests)
 
 ## Overall
 
@@ -52,16 +52,16 @@ Active worktrees: none
 
 | Task | Status | Blocked By | Est. Hours |
 |---|---|---|---|
-| Layer 0: Stage D output validation | NOT STARTED | StageDOutput contract | 0.5h |
-| Layer 1: Scenario weights + signal computation + tension map | NOT STARTED | Layer 0 | 0.5h |
-| Layer 2: Agent prompts × 3 (mode-aware) | NOT STARTED | Layer 1 | 2h |
+| Layer 0: Stage D output validation | DONE | StageDOutput contract | 0.5h |
+| Layer 1: Scenario weights + signal computation + tension map | DONE | Layer 0 | 0.5h |
+| Layer 2: Agent prompts × 3 (mode-aware) | DONE | Layer 1 | 2h |
 | Layer 2: JSON output schemas | DONE | shared models | 0.5h |
-| Layer 3: Audit (8 checks) | NOT STARTED | Layer 2 | 2h |
+| Layer 3: Audit (8 checks) | DONE | Layer 2 | 2h |
 | Layer 3b: Self-consistency pre-computation | NOT STARTED | Layer 3 | 0.75h |
 | Synthesis template (trade-off matrix + 3-layer output) | NOT STARTED | Layer 3 | 1.5h |
 | Synthesis trade-off statement (1 LLM call) | NOT STARTED | synthesis template | 0.25h |
 | Scenario switch wiring | NOT STARTED | all above | 0.5h |
-| Timeout + graceful degradation (F16) | NOT STARTED | Layer 2 | 0.25h |
+| Timeout + graceful degradation (F16) | DONE | Layer 2 | 0.25h |
 | E integration test | NOT STARTED | all above | 0.5h |
 
 ## Test Fixtures

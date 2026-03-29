@@ -39,7 +39,7 @@ def extract_text_from_pdf(source: str | Path | bytes) -> str:
         pages: list[str] = []
         for page_num in range(len(doc)):
             page = doc[page_num]
-            text = page.get_text()
+            text: str = str(page.get_text())
             if text.strip():
                 pages.append(text)
 
