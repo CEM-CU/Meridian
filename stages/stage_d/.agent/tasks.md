@@ -1,6 +1,6 @@
 # Stage D — Task List
 
-> last_updated: 2026-03-29T00:00:00Z by human (bootstrap)
+> last_updated: 2026-03-29T00:00:00Z by claude (D5 complete)
 
 ## Overview
 
@@ -8,8 +8,8 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
 
 ## Tasks (ordered by dependency)
 
-### D1: Personality Flag Derivation [NOT STARTED]
-- **Blocked by:** shared models (Flag, BigFiveScores, ScenarioConfig)
+### D1: Personality Flag Derivation [DONE]
+- **Blocked by:** shared models (Flag, BigFiveScores, ScenarioConfig) — RESOLVED
 - **Input:** BigFiveScores per candidate + ScenarioConfig + optional TeamMember list
 - **Output:** list[Flag] with evidence_type=scored_flag
 - **LLM calls:** 0
@@ -60,7 +60,7 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
   - **Check 5: Flag Count Reasonableness (advisory).** >25 per candidate → warn "noisy." <3 → warn "thin." Expected: 8-18.
 - **Tests:** Test each check independently with crafted flag sets. Contradiction removal picks correct flag. Requirement coverage catches missing requirements. Cross-stream coherence detects tension. Count check fires at boundaries.
 
-### D5: Assessment Mode Determination [NOT STARTED]
+### D5: Assessment Mode Determination [DONE]
 - **Blocked by:** shared models
 - **Input:** CandidateData per candidate
 - **Output:** AssessmentMode per candidate + provenance metadata

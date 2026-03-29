@@ -1,12 +1,14 @@
 # Architectural Decisions Log
 
-> last_updated: 2026-03-29T00:00:00Z by human (bootstrap)
+> last_updated: 2026-03-29T04:00:00Z by agent (F18 sanitization)
 
 ## Format
 
 Each entry: `[DATE] DECISION: <what>. RATIONALE: <why>. FILES CHANGED: <list>. DOWNSTREAM IMPACT: <what's now stale>.`
 
 ## Entries
+
+[2026-03-29] DECISION: F18 — shared input sanitization utility added. `shared.sanitize.sanitize_for_prompt` strips role injection lines, override phrases, triple backtick blocks, delimiter sequences (---), and XML system tags before text is interpolated into LLM prompts. Fail-open design: on unexpected error, returns original text and logs a warning. RATIONALE: LLM prompt injection is a critical risk; JD and CV text are untrusted external inputs. Centralising sanitization in shared ensures all stages benefit from the same protection without duplication. FILES CHANGED: shared/src/shared/sanitize.py (new), shared/tests/test_sanitize.py (new), stages/stage_c/src/stage_c/prompts/jd_extraction.py (now calls sanitize_for_prompt before interpolation). DOWNSTREAM IMPACT: C3 CV rubric prompt (when implemented) should import and call sanitize_for_prompt on cv_text before interpolation.
 
 [2026-03-29] DECISION: No web framework during build phase. Pure Python packages + Pydantic contracts. FastAPI added as thin shell post-build in ~30min. RATIONALE: Zero framework overhead during 16h sprint. Pydantic models become API schemas with no refactoring. FILES CHANGED: pyproject.toml (no framework deps). DOWNSTREAM IMPACT: None — no code depends on a framework.
 

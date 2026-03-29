@@ -50,6 +50,13 @@ Every context file has a `last_updated` header. When reading a file, check its t
 - Tests: pytest + hypothesis for deterministic stages, structured mocks for LLM stages.
 - Async where parallelism matters (Stage C candidate calls, Stage E agent calls). Use `httpx.AsyncClient` for LLM API calls.
 - Every public function has a docstring. Every module has a module-level docstring.
+- **SOLID/DRY/KISS** — All code must follow these principles:
+  - Single Responsibility: each function/class/module does one thing
+  - Open/Closed: extend via composition, not modification
+  - Dependency Inversion: depend on abstractions (protocols/interfaces), not concretions
+  - DRY: no duplicated logic — extract shared utilities
+  - KISS: simplest correct solution — no premature abstraction
+- **Fully modular and decoupled** — stages communicate only through `shared.models` contracts. No direct imports between stages.
 
 ## Do NOT
 

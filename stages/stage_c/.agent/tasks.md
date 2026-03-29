@@ -1,6 +1,6 @@
 # Stage C — Task List
 
-> last_updated: 2026-03-29T00:00:00Z by human (bootstrap)
+> last_updated: 2026-03-29T02:00:00Z by agent (C1 complete)
 
 ## Overview
 
@@ -8,7 +8,7 @@ Stage C transforms raw JD and CV text into structured, typed, citable data. 4 LL
 
 ## Tasks (ordered by dependency)
 
-### C1: JD Requirement Extraction [NOT STARTED]
+### C1: JD Requirement Extraction [DONE]
 - **Input:** Raw JD text string (pasted by user)
 - **Output:** list[Requirement] with sequential IDs (REQ-01..REQ-N), assessable_from_cv boolean, scenario_priority per scenario
 - **LLM calls:** 1
@@ -55,7 +55,7 @@ Stage C transforms raw JD and CV text into structured, typed, citable data. 4 LL
   - **Requirement drop detection safeguard:** After batched call returns, verify every input requirement_id appears in output. If any missing, run targeted follow-up call for missing requirements only. Normal: 3 calls. Worst case: 4-5 calls.
 - **Tests:** Mock LLM response with dropped requirement → verify follow-up fires. Mock response with missing citation on MEETS → verify downgrade to GAP. Property test: output has exactly one assessment per requirement per candidate.
 
-### C4: Rubric-to-Flag Bridge [NOT STARTED]
+### C4: Rubric-to-Flag Bridge [DONE]
 - **Blocked by:** shared models (Flag, RubricAssessment)
 - **Input:** list[RubricAssessment] per candidate + list[Requirement] + active scenario name
 - **Output:** list[Flag] with evidence_type cv_rubric/requirement_gap/cv_pattern/routing

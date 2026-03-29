@@ -1,6 +1,6 @@
 # Stage E — Task List
 
-> last_updated: 2026-03-29T00:00:00Z by human (bootstrap)
+> last_updated: 2026-03-29T00:00:00Z by agent (E4 done)
 
 ## Overview
 
@@ -50,7 +50,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - Per-agent timeout: 15s. On timeout: partial output with fallback notice
 - **Tests:** Mock agent responses → parse correctly. Verify allowlist filtering is correct per agent. Verify mode preamble changes between full/partial. Timeout handling returns partial output.
 
-### E4: Layer 2 — JSON Output Schemas [NOT STARTED]
+### E4: Layer 2 — JSON Output Schemas [DONE]
 - **Blocked by:** shared models
 - **Implementation:**
   - Define Pydantic models for agent output: AgentVerdict, Claim, EvidenceBasis
