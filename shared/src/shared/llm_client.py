@@ -52,15 +52,23 @@ class AnthropicClient:
         self.model: str = model
         self.max_tokens: int = max_tokens
 
-    async def complete(self, system: str, user: str) -> str:
+    async def complete(
+        self,
+        system: str,
+        user: str,
+        response_format: dict[str, Any] | None = None,
+    ) -> str:
         """Call the Anthropic Messages API and return the assistant text.
 
         Logs request metadata (model, token counts) but never logs prompt
-        content or the API key.
+        content or the API key. The ``response_format`` parameter is accepted
+        for Protocol compatibility but ignored (Anthropic uses tool_use for
+        structured output, not response_format).
 
         Args:
             system: System prompt string.
             user: User message string.
+            response_format: Ignored for Anthropic. Accepted for interface compatibility.
 
         Returns:
             The assistant's text response.
@@ -150,7 +158,12 @@ class _OpenAICompatibleClient:
         self.model: str = model if model is not None else default_model
         self.max_tokens: int = max_tokens
 
-    async def complete(self, system: str, user: str) -> str:
+    async def complete(
+        self,
+        system: str,
+        user: str,
+        response_format: dict[str, Any] | None = None,
+    ) -> str:
         """Call the OpenAI-compatible API and return the assistant text.
 
         Logs request metadata (model, token counts) but never logs prompt
@@ -159,6 +172,8 @@ class _OpenAICompatibleClient:
         Args:
             system: System prompt string.
             user: User message string.
+            response_format: Optional OpenAI-style response_format dict for
+                structured outputs. Example: ``{"type": "json_schema", "json_schema": {...}}``.
 
         Returns:
             The assistant's text response.
@@ -179,11 +194,15 @@ class _OpenAICompatibleClient:
             ],
         }
 
+        if response_format is not None:
+            body["response_format"] = response_format
+
         logger.debug(
-            "%s.complete request: model=%s max_tokens=%d",
+            "%s.complete request: model=%s max_tokens=%d structured=%s",
             self._provider,
             self.model,
             self.max_tokens,
+            response_format is not None,
         )
 
         async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=10.0)) as client:
@@ -293,7 +312,12 @@ class MockLLMClient:
             self._cycle = cycle(responses)
         self.calls: list[tuple[str, str]] = []
 
-    async def complete(self, system: str, user: str) -> str:
+    async def complete(
+        self,
+        system: str,
+        user: str,
+        response_format: dict[str, Any] | None = None,
+    ) -> str:
         """Return the next pre-configured response and record the call.
 
         Args:
