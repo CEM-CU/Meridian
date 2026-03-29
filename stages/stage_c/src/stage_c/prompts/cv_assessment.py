@@ -48,20 +48,33 @@ investigation questions.
 
 Assign EXACTLY ONE level per requirement. Do not interpret or soften these definitions.
 
-**exceeds** — CV evidence clearly SURPASSES the requirement. The surplus must be unambiguous. \
-"P&L $500M+ required, CV shows $1.2B standalone P&L" is EXCEEDS. \
-"P&L $500M+ required, CV shows $520M" is MEETS, NOT exceeds.
+**exceeds** — CV evidence clearly SURPASSES the requirement with unambiguous surplus. \
+The threshold is: could a reasonable recruiter look at this and say "this person has \
+done MORE than what we asked for"? If yes, assign EXCEEDS. Do NOT default to MEETS \
+out of caution. Specific examples: \
+"P&L $500M+ required, CV shows $1.2B standalone P&L" → EXCEEDS. \
+"10 years required, CV shows 18 years in the exact domain" → EXCEEDS. \
+"Team of 200+ required, CV shows 320-person org across 3 geographies" → EXCEEDS. \
+"P&L $500M+ required, CV shows $520M" → MEETS (marginal, not surplus).
 
 **meets** — CV evidence satisfies the requirement as stated. Direct, clear match. \
-No inference needed beyond reading the CV.
+No inference needed beyond reading the CV. The evidence addresses the SPECIFIC \
+requirement, not a vaguely related area.
 
-**partial** — Some evidence exists but with identifiable gaps. Related but not directly \
-matching experience, or insufficient depth/duration. Your notes MUST explain specifically: \
-(a) what IS present, and (b) what IS MISSING.
+**partial** — SOME evidence exists but with a SPECIFIC, IDENTIFIABLE shortfall. \
+Use partial ONLY when you can name exactly what is present AND exactly what is \
+missing. "Has 6 years but requires 10" is partial. "Led teams in US but requires \
+EMEA experience" is partial. If you cannot name the specific shortfall, use gap. \
+Do NOT use partial as a soft version of gap — partial requires POSITIVE evidence \
+that falls short, not absence of evidence.
 
-**gap** — No supporting evidence found in the CV. You searched the entire document and \
-found nothing addressing this requirement. This is not a failure — it is the correct answer \
-when evidence does not exist.
+**gap** — No supporting evidence found in the CV, OR the evidence is so tangential \
+that it does not meaningfully address the requirement. Be ruthless here. \
+"Worked at a company that had international offices" is NOT evidence for \
+"led international teams." A job title that COULD imply something is NOT evidence — \
+the CV must SHOW it. When in doubt between partial and gap, choose gap. \
+GAP is the correct answer for the majority of requirements for most candidates. \
+A finalist having 4-6 gaps out of 12 requirements is normal and expected.
 
 **not_assessable** — The requirement cannot be evaluated from CV data alone. Use exclusively \
 for behavioral/interpersonal requirements and for requirements so vague that no CV evidence \
@@ -112,6 +125,27 @@ rather than lexical, assign confidence MEDIUM (not HIGH).
 exceed industry timelines.
 - **Very short CV:** Most requirements will be gap or low-confidence partial. This is \
 correct behaviour.
+
+## Calibration — Common Mistakes to Avoid
+
+1. **Giving MEETS when evidence is tangential.** "Led a team" does NOT meet "Led a team \
+of 200+ across multiple geographies" unless the CV specifies the size and scope. \
+If the CV omits the number, this is PARTIAL at best (you can infer leadership but not scale).
+
+2. **Never assigning GAP.** A strong finalist will still have 3-6 gaps out of 12 \
+requirements. If you produce zero gaps, you are being too generous. Re-examine.
+
+3. **Treating job titles as evidence.** "VP of Engineering" does not prove team scaling, \
+microservices migration, or international management. The CV must describe the \
+ACTIVITIES and OUTCOMES, not just the title.
+
+4. **Refusing to assign EXCEEDS.** When a candidate has 18 years for a 10-year requirement, \
+or $1.2B P&L for a $500M requirement, or 320 engineers for a 200+ requirement, \
+that IS exceeds. Do not reflexively downgrade to meets.
+
+5. **Using PARTIAL as a hedge.** Partial requires you to name BOTH what exists AND what \
+is missing. If you cannot name what exists, it is GAP. If you cannot name what is \
+missing, it is MEETS or EXCEEDS.
 
 ## Output Format
 

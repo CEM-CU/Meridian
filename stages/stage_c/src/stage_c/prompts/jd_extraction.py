@@ -69,8 +69,11 @@ Priorities: operational excellence, team retention, process optimization.
    - **growth**: Scaling a business into new markets or segments. \
 Priorities: market expansion, strategic partnerships, talent acquisition at scale.
 
-8. **Target 8-15 requirements.** Fewer than 6 suggests the JD is too vague. More than \
-18 suggests requirements need consolidation.
+8. **Hard target: 8-15 requirements. Never exceed 15.** If your initial extraction yields \
+more than 15, you MUST consolidate. Merge related requirements into single entries. \
+Behavioral/interpersonal requirements are particularly prone to over-splitting — "empathy," \
+"trust-building," and "psychological safety" are ONE requirement about interpersonal \
+effectiveness, not three. Fewer than 6 suggests the JD is too vague.
 
 9. **Requirement text max 200 characters.** Must work as a column header in a trade-off \
 matrix.
