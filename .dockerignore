@@ -1,0 +1,16 @@
+.git
+.gitignore
+.claude/
+.orchestrator/
+.hypothesis/
+.coverage
+.pytest_cache/
+.ruff_cache/
+.pyright/
+__pycache__/
+*.pyc
+.venv/
+.env
+tests/
+docs/
+*.md
