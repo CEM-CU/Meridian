@@ -274,16 +274,18 @@ class TestCheckFlagScope:
         assert len(new_verdict.claims) == 1
         assert len(warnings) == 1
 
-    def test_flag_not_in_available_flags_kept(self) -> None:
-        """A scored_flag reference that doesn't match any available flag is kept (Check 4 will catch it)."""
+    def test_flag_not_in_available_flags_stripped(self) -> None:
+        """A scored_flag reference not in available flags is stripped as out-of-scope."""
         allowlist = frozenset({FlagCategory.EXECUTION})
         claim = _make_claim(reference="UNKNOWN_FLAG", evidence_type="scored_flag")
         verdict = _make_verdict(claims=[claim])
 
         new_verdict, warnings = check_flag_scope(verdict, allowlist, [])
 
-        assert len(new_verdict.claims) == 1
-        assert warnings == []
+        assert len(new_verdict.claims) == 0
+        assert len(warnings) == 1
+        assert "[CHECK2]" in warnings[0]
+        assert "UNKNOWN_FLAG" in warnings[0]
 
 
 # ---------------------------------------------------------------------------
@@ -938,9 +940,9 @@ class TestRunAudit:
         # Hallucinated claim stripped
         assert len(audited["role_fit"].claims) == 1
         assert audited["role_fit"].claims[0].evidence_basis.reference == "EXECUTION_CONSCIENTIOUSNESS_FIT"
-        # Warning generated
-        check4_warnings = [w for w in warnings if "[CHECK4]" in w]
-        assert len(check4_warnings) == 1
+        # Warning generated (Check 2 catches unknown flags before Check 4)
+        strip_warnings = [w for w in warnings if "HALLUCINATED_FLAG_XYZ" in w]
+        assert len(strip_warnings) >= 1
 
     def test_multiple_agents_all_audited(self) -> None:
         """All non-None verdicts get audited."""

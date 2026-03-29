@@ -97,9 +97,13 @@ def check_flag_scope(
         category = flag_category_map.get(flag_name)
 
         if category is None:
-            # Flag name not found in available flags — also caught by Check 4,
-            # but we strip here too for scope enforcement.
-            kept_claims.append(claim)
+            # Flag name not in available flags — strip as out-of-scope.
+            msg = (
+                f"[CHECK2] Claim stripped from '{verdict.agent_role}': "
+                f"scored_flag '{flag_name}' not found in available flags"
+            )
+            warnings.append(msg)
+            logger.warning(msg)
             continue
 
         if category not in agent_allowlist:
@@ -291,9 +295,14 @@ def _check_requirement_gap_claim(
             f"requirement_id '{req_id}' not in confirmed list"
         )
 
+    # Behavioral requirements (assessable_from_cv=False) have no rubric by design.
+    # Agents may cite them as requirement_gap to note the routing — this is valid.
+    req_obj = next((r for r in requirements if r.requirement_id == req_id), None)
+    if req_obj is not None and not req_obj.assessable_from_cv:
+        return None  # Behavioral requirement — no rubric to validate against, claim is valid.
+
     rubric = _rubric_for(req_id, claim.candidate_name, rubric_assessments)
     if rubric is None:
-        # No rubric assessment available — cannot validate the gap claim.
         return (
             f"[CHECK5] requirement_gap claim stripped from '{claim.candidate_name}': "
             f"no rubric assessment found for requirement '{req_id}' to verify gap"

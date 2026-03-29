@@ -26,11 +26,7 @@ from stage_c.jd_extraction import extract_requirements
 from stage_c.priority_resolution import resolve_active_priorities
 from stage_d.pipeline import run_stage_d
 
-from stage_e.layer0_validation import validate_stage_d_output
-from stage_e.layer1_signals import compute_layer1
-from stage_e.layer2_agents.runner import run_agents
-from stage_e.layer3_audit.runner import run_audit
-from stage_e.synthesis.assembler import assemble_synthesis
+from stage_e.pipeline import run_stage_e
 
 if TYPE_CHECKING:
     from shared.models import CandidateData, Flag, Requirement, RubricAssessment
@@ -156,62 +152,6 @@ def _run_c2_c4(
     return stage_c_output, cv_flags
 
 
-async def _run_stage_e(
-    stage_d_output: StageDOutput,
-    llm_client: LLMClient,
-) -> tuple[SynthesisOutput, list[str]]:
-    """Run the full Stage E pipeline: E1 → E2 → E3 → E5 → E7.
-
-    Returns (SynthesisOutput, all_warnings). Three agent LLM calls run in
-    parallel; synthesis makes one more LLM call (~10-13s total).
-    """
-    # E1: Layer 0 — Stage D output validation
-    validated_d_output, validation_warnings = validate_stage_d_output(stage_d_output)
-
-    # E2: Layer 1 — scenario weights + signal computation + tension map
-    candidate_names = [c.name for c in validated_d_output.candidate_data]
-    assessment_modes: dict[str, str] = {
-        name: prov.assessment_mode.value for name, prov in validated_d_output.provenance_per_candidate.items()
-    }
-    layer1_output = compute_layer1(
-        flags=validated_d_output.flags,
-        scenario=validated_d_output.scenario,
-        candidate_names=candidate_names,
-        assessment_modes=assessment_modes,
-    )
-
-    # E3: Layer 2 — 3 parallel agent evaluations
-    agent_verdicts = await run_agents(
-        flags=validated_d_output.flags,
-        tension_map=layer1_output.tension_map,
-        candidates=validated_d_output.candidate_data,
-        requirements=validated_d_output.confirmed_requirements,
-        assessment_modes=assessment_modes,
-        llm_client=llm_client,
-    )
-
-    # E5: Layer 3 — audit (8 checks)
-    audited_verdicts, audit_warnings = run_audit(
-        verdicts=agent_verdicts,
-        flags=validated_d_output.flags,
-        candidate_data=validated_d_output.candidate_data,
-        rubric_assessments=validated_d_output.rubric_matrix,
-        requirements=validated_d_output.confirmed_requirements,
-    )
-
-    # E7: Synthesis assembly (1 LLM call for trade-off statement)
-    synthesis = await assemble_synthesis(
-        stage_d_output=validated_d_output,
-        layer1_output=layer1_output,
-        audited_verdicts=audited_verdicts,
-        audit_warnings=audit_warnings,
-        llm_client=llm_client,
-    )
-
-    all_warnings = [*validation_warnings, *audit_warnings]
-    return synthesis, all_warnings
-
-
 async def evaluate_scenario(
     cached: CachedPipelineState,
     scenario: ScenarioConfig,
@@ -240,7 +180,7 @@ async def evaluate_scenario(
     logger.info("Stage D complete for scenario=%s", scenario.name)
 
     # Stage E: 3 LLM calls + 1 synthesis (~10-13s)
-    synthesis, e_warnings = await _run_stage_e(stage_d_output, llm_client)
+    synthesis, e_warnings = await run_stage_e(stage_d_output, llm_client)
     all_warnings.extend(e_warnings)
     logger.info("Stage E complete for scenario=%s", scenario.name)
 

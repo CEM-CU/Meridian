@@ -43,6 +43,7 @@ def _make_flag(
     evidence_type: EvidenceType = EvidenceType.SCORED_FLAG,
     big_five_source: str | None = "C",
     requirement_id: str | None = None,
+    metadata: dict | None = None,
 ) -> Flag:
     """Create a minimal Flag for testing."""
     return Flag(
@@ -53,6 +54,7 @@ def _make_flag(
         evidence_type=evidence_type,
         big_five_source=big_five_source,
         requirement_id=requirement_id,
+        metadata=metadata or {},
     )
 
 
@@ -228,7 +230,7 @@ def test_risk_band_five_risk_flags_is_high() -> None:
 
 
 def test_risk_band_high_priority_experience_gap_counts() -> None:
-    """CV_GAP flags in EXPERIENCE_GAP category count toward risk band."""
+    """CV_GAP flags with active_priority=high count toward risk band."""
     flags = [
         _make_flag(
             "CV_GAP",
@@ -238,6 +240,7 @@ def test_risk_band_high_priority_experience_gap_counts() -> None:
             evidence_type=EvidenceType.REQUIREMENT_GAP,
             big_five_source=None,
             requirement_id="REQ-01",
+            metadata={"active_priority": "high"},
         ),
         _make_flag(
             "CV_GAP",
@@ -247,6 +250,7 @@ def test_risk_band_high_priority_experience_gap_counts() -> None:
             evidence_type=EvidenceType.REQUIREMENT_GAP,
             big_five_source=None,
             requirement_id="REQ-02",
+            metadata={"active_priority": "high"},
         ),
         _make_flag(
             "CV_GAP",
@@ -256,6 +260,7 @@ def test_risk_band_high_priority_experience_gap_counts() -> None:
             evidence_type=EvidenceType.REQUIREMENT_GAP,
             big_five_source=None,
             requirement_id="REQ-03",
+            metadata={"active_priority": "high"},
         ),
     ]
     result = compute_layer1(flags, _make_scenario(), ["Alice"], {"Alice": "full"})

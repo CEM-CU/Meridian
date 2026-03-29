@@ -154,17 +154,6 @@ def _collect_investigation_questions(
     ]
 
 
-def _unique_candidates_from_verdicts(verdicts: dict[str, AgentVerdict]) -> list[str]:
-    """Return a stable, deduplicated list of candidate names across all verdicts."""
-    seen: set[str] = set()
-    names: list[str] = []
-    for verdict in verdicts.values():
-        for claim in verdict.claims:
-            if claim.candidate_name not in seen:
-                seen.add(claim.candidate_name)
-                names.append(claim.candidate_name)
-    return names
-
 
 def _index_contested_by_candidate(
     contested: list[ContestedSignal],
@@ -216,9 +205,11 @@ def build_candidate_summaries(
         assessment_modes: Candidate name -> "full" or "partial".
 
     Returns:
-        List of CandidateSummary, one per unique candidate in verdicts.
+        List of CandidateSummary, one per candidate in assessment_modes.
     """
-    candidate_names = _unique_candidates_from_verdicts(verdicts)
+    # Use assessment_modes as the source of all candidate names — guarantees
+    # every candidate gets a summary even if all their claims were stripped.
+    candidate_names = list(assessment_modes.keys())
 
     contested_by_candidate = _index_contested_by_candidate(detect_contested_signals(verdicts, tension_map))
 

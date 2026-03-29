@@ -528,14 +528,14 @@ def _make_team_dynamics_verdict_json() -> str:
             "unaddressed_flags": [],
             "claims": [
                 {
-                    "text": "Alice shows positive conscientiousness signal supporting reliable team delivery.",
-                    "evidence_basis": {"type": "scored_flag", "reference": "EXECUTION_CONSCIENTIOUSNESS_FIT"},
+                    "text": "Alice shows complementary extraversion balance with the existing team.",
+                    "evidence_basis": {"type": "biographical_pattern", "reference": "team_complementarity"},
                     "confidence": "medium",
                     "candidate_name": "Alice",
                 },
                 {
-                    "text": "Bob shows positive conscientiousness but potential friction under team dynamics.",
-                    "evidence_basis": {"type": "scored_flag", "reference": "EXECUTION_CONSCIENTIOUSNESS_FIT"},
+                    "text": "Bob shows potential friction with team dynamics based on career trajectory patterns.",
+                    "evidence_basis": {"type": "biographical_pattern", "reference": "team_friction_pattern"},
                     "confidence": "medium",
                     "candidate_name": "Bob",
                 },
@@ -581,8 +581,8 @@ def _make_risk_verdict_json() -> str:
                     "candidate_name": "Bob",
                 },
                 {
-                    "text": "Alice presents low risk based on available CV and personality signals.",
-                    "evidence_basis": {"type": "scored_flag", "reference": "EXECUTION_CONSCIENTIOUSNESS_FIT"},
+                    "text": "Alice presents low derailment risk based on stable career trajectory and no red flags.",
+                    "evidence_basis": {"type": "biographical_pattern", "reference": "career_stability"},
                     "confidence": "high",
                     "candidate_name": "Alice",
                 },

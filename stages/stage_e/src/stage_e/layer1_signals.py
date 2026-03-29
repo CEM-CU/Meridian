@@ -255,10 +255,16 @@ def _compute_signal_label(candidate_flags: list[Flag], weights: dict[str, float]
 
 
 def _is_risk_flag(flag: Flag) -> bool:
-    """Return True if this flag counts toward the risk band."""
+    """Return True if this flag counts toward the risk band.
+
+    EXPERIENCE_GAP flags only count if their active_priority metadata is 'high'.
+    Medium/low priority gaps are background noise, not risk signals.
+    """
     if flag.category in _RISK_CATEGORIES:
         return True
-    return flag.category == FlagCategory.EXPERIENCE_GAP and flag.name in _HIGH_PRIORITY_EXPERIENCE_GAP_NAMES
+    if flag.category == FlagCategory.EXPERIENCE_GAP and flag.name in _HIGH_PRIORITY_EXPERIENCE_GAP_NAMES:
+        return flag.metadata.get("active_priority") == "high"
+    return False
 
 
 def _count_risk_flags(candidate_flags: list[Flag]) -> int:
