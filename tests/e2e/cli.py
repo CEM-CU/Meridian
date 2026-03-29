@@ -24,15 +24,15 @@ for _p in [str(_PROJECT_ROOT), str(_TESTS_DIR)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from rich.console import Console  # noqa: E402
-from rich.panel import Panel  # noqa: E402
-from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn  # noqa: E402
-from rich.table import Table  # noqa: E402
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+from rich.table import Table
 
-from e2e.registry import SCENARIOS  # noqa: E402
-from e2e.runner import run_scenario  # noqa: E402
-from e2e.writer import write_results  # noqa: E402
-from meridian.common.llm_client import OpenRouterClient  # noqa: E402
+from e2e.registry import SCENARIOS
+from e2e.runner import run_scenario
+from e2e.writer import write_results
+from meridian.common.llm_client import OpenRouterClient
 
 
 def parse_args() -> argparse.Namespace:

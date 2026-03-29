@@ -51,6 +51,9 @@ class AnthropicClient:
         self._api_key: str = resolved_key
         self.model: str = model
         self.max_tokens: int = max_tokens
+        self._http_client: httpx.AsyncClient = httpx.AsyncClient(
+            timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=10.0),
+        )
 
     async def complete(
         self,
@@ -94,12 +97,11 @@ class AnthropicClient:
             self.max_tokens,
         )
 
-        async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=10.0)) as client:
-            response = await client.post(
-                _ANTHROPIC_API_URL,
-                headers=headers,
-                json=body,
-            )
+        response = await self._http_client.post(
+            _ANTHROPIC_API_URL,
+            headers=headers,
+            json=body,
+        )
 
         if response.status_code != 200:
             raise ValueError(f"Anthropic API returned status {response.status_code}: {response.text[:500]}")
@@ -157,6 +159,9 @@ class _OpenAICompatibleClient:
         self._provider: str = provider
         self.model: str = model if model is not None else default_model
         self.max_tokens: int = max_tokens
+        self._http_client: httpx.AsyncClient = httpx.AsyncClient(
+            timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=10.0),
+        )
 
     async def complete(
         self,
@@ -205,12 +210,11 @@ class _OpenAICompatibleClient:
             response_format is not None,
         )
 
-        async with httpx.AsyncClient(timeout=httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=10.0)) as client:
-            response = await client.post(
-                self._api_url,
-                headers=headers,
-                json=body,
-            )
+        response = await self._http_client.post(
+            self._api_url,
+            headers=headers,
+            json=body,
+        )
 
         if response.status_code != 200:
             raise ValueError(f"{self._provider} API returned status {response.status_code}: {response.text[:500]}")

@@ -17,6 +17,9 @@ from meridian.extraction.schemas import C1_REQUIREMENTS_SCHEMA, C3_ASSESSMENTS_S
 # Models that support OpenAI-style structured outputs via response_format.
 _STRUCTURED_OUTPUT_PREFIXES: tuple[str, ...] = ("openai/gpt-4.1", "openai/gpt-5", "openai/gpt-4o")
 
+from meridian.evaluation.synthesis.models import SynthesisOutput
+from meridian.models.pipeline import StageCOutput, StageDOutput
+
 if TYPE_CHECKING:
     from meridian.common.llm_client import OpenRouterClient
 
@@ -122,16 +125,16 @@ async def run_scenario(
 
 
 def _extract_metrics(
-    stage_c_output: object,
+    stage_c_output: StageCOutput,
     cv_flags: list,
-    stage_d_output: object,
-    synthesis: object,
+    stage_d_output: StageDOutput,
+    synthesis: SynthesisOutput,
     candidates: list,
 ) -> dict[str, Any]:
     """Extract structured metrics from Stage C, D, and E outputs."""
-    sc = stage_c_output  # type: ignore[assignment]
-    sd = stage_d_output  # type: ignore[assignment]
-    se = synthesis  # type: ignore[assignment]
+    sc = stage_c_output
+    sd = stage_d_output
+    se = synthesis
 
     cv_reqs = [r for r in sc.requirements if r.assessable_from_cv]
     beh_reqs = [r for r in sc.requirements if not r.assessable_from_cv]

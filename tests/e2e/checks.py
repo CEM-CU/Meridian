@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from meridian.evaluation.synthesis.models import SynthesisOutput
 from meridian.models import EvidenceType, RubricLevel
 from meridian.models.pipeline import AssessmentMode, StageCOutput, StageDOutput
 
@@ -159,13 +160,13 @@ def run_stage_d_checks(
 
 
 def run_stage_e_checks(
-    synthesis: object,
+    synthesis: SynthesisOutput,
     candidates: list,
     warnings: list[str],
 ) -> list[dict[str, Any]]:
     """Run Stage E quality checks. Returns list of {name, passed, detail}."""
     checks: list[dict[str, Any]] = []
-    s = synthesis  # type: ignore[assignment]
+    s = synthesis
 
     # 1. Has trade-off matrix
     checks.append({
