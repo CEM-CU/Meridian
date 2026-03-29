@@ -11,7 +11,7 @@ Three candidates with distinct strength/gap profiles:
   no insurance/financial services experience, NO Big Five (partial mode).
 """
 
-from shared.models import (
+from meridian.models import (
     BigFiveScores,
     CandidateData,
     Confidence,

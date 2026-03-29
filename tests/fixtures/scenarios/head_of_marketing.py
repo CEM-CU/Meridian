@@ -7,7 +7,7 @@ Three candidates with distinct strength/gap profiles:
 - Léa Dubois: stretch — deep EU brand expertise, limited scale and DTC analytics, NO Big Five
 """
 
-from shared.models import (
+from meridian.models import (
     BigFiveScores,
     CandidateData,
     Confidence,

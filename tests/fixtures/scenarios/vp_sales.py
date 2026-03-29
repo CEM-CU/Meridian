@@ -20,7 +20,7 @@ Ground truth expectations and scenario config are included for use in
 integration tests and Stage C/D validation.
 """
 
-from shared.models import (
+from meridian.models import (
     BigFiveScores,
     CandidateData,
     Confidence,

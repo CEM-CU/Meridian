@@ -15,7 +15,7 @@ Scenario config: TURNAROUND with category weights reflecting urgency of executio
 strategic reset, and team leadership.
 """
 
-from shared.models import BigFiveScores, CandidateData, ScenarioConfig, ScenarioName
+from meridian.models import BigFiveScores, CandidateData, ScenarioConfig, ScenarioName
 
 # ---------------------------------------------------------------------------
 # Job Description

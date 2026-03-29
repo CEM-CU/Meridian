@@ -18,7 +18,7 @@ Requirement domains covered in GROUND_TRUTH:
     international_experience, mentoring_culture, exec_communication
 """
 
-from shared.models import BigFiveScores, CandidateData, ScenarioConfig, ScenarioName
+from meridian.models import BigFiveScores, CandidateData, ScenarioConfig, ScenarioName
 
 # ---------------------------------------------------------------------------
 # Job Description

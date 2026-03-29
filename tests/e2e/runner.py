@@ -6,19 +6,19 @@ import time
 from typing import TYPE_CHECKING, Any
 
 from rich.progress import Progress, TaskID
-from stage_c.pipeline import run_stage_c
-from stage_c.schemas import C1_REQUIREMENTS_SCHEMA, C3_ASSESSMENTS_SCHEMA
-from stage_d.pipeline import run_stage_d
-from stage_e.pipeline import run_stage_e
 
 from e2e.checks import run_stage_c_checks, run_stage_d_checks, run_stage_e_checks
 from e2e.registry import load_scenario
+from meridian.derivation.pipeline import run_stage_d
+from meridian.evaluation.pipeline import run_stage_e
+from meridian.extraction.pipeline import run_stage_c
+from meridian.extraction.schemas import C1_REQUIREMENTS_SCHEMA, C3_ASSESSMENTS_SCHEMA
 
 # Models that support OpenAI-style structured outputs via response_format.
 _STRUCTURED_OUTPUT_PREFIXES: tuple[str, ...] = ("openai/gpt-4.1", "openai/gpt-5", "openai/gpt-4o")
 
 if TYPE_CHECKING:
-    from shared.llm_client import OpenRouterClient
+    from meridian.common.llm_client import OpenRouterClient
 
 
 async def run_scenario(

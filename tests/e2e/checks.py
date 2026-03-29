@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from shared.models import EvidenceType, RubricLevel
-from shared.models.pipeline import AssessmentMode, StageCOutput, StageDOutput
+from meridian.models import EvidenceType, RubricLevel
+from meridian.models.pipeline import AssessmentMode, StageCOutput, StageDOutput
 
 
 def run_stage_c_checks(

@@ -12,7 +12,7 @@ Three candidates:
   NO Big Five (partial assessment mode).
 """
 
-from shared.models import (
+from meridian.models import (
     BigFiveScores,
     CandidateData,
     ScenarioConfig,

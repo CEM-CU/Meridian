@@ -9,7 +9,7 @@ BigFiveScores instance with OCEAN values on a 0.0-1.0 scale:
 - very high: 0.85-0.95
 """
 
-from shared.models import BigFiveScores
+from meridian.models import BigFiveScores
 
 BIG_FIVE_PRESETS: dict[str, BigFiveScores] = {
     "The Turnaround Driver": BigFiveScores(

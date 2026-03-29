@@ -25,7 +25,8 @@ from fixtures.synthetic_candidates import (  # noqa: E402
     CANDIDATE_SARAH,
 )
 from fixtures.synthetic_jd import BMW_CTO_JD_TEXT  # noqa: E402
-from shared.models import (  # noqa: E402
+
+from meridian.models import (  # noqa: E402
     BigFiveScores,
     CandidateData,
     Confidence,

@@ -14,7 +14,7 @@ Three candidates:
   15 reports, no process maturity. Partial mode — no Big Five.
 """
 
-from shared.models import (
+from meridian.models import (
     BigFiveScores,
     CandidateData,
     Confidence,

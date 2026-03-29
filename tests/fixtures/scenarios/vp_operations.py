@@ -11,10 +11,10 @@ lean/six sigma, labor relations, safety/compliance, SLA management, vendor negot
 and behavioral requirements around hard decisions, morale, and communication.
 """
 
-from shared.models.candidates import BigFiveScores, CandidateData
-from shared.models.requirements import Priority, Requirement, ScenarioPriority
-from shared.models.rubric import Confidence, RubricAssessment, RubricLevel
-from shared.models.scenarios import ScenarioConfig, ScenarioName
+from meridian.models.candidates import BigFiveScores, CandidateData
+from meridian.models.requirements import Priority, Requirement, ScenarioPriority
+from meridian.models.rubric import Confidence, RubricAssessment, RubricLevel
+from meridian.models.scenarios import ScenarioConfig, ScenarioName
 
 # ---------------------------------------------------------------------------
 # Job Description

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from shared.models import CandidateData, ScenarioConfig
+    from meridian.models import CandidateData, ScenarioConfig
 
 # Ensure fixtures are importable
 _FIXTURES_DIR = str(Path(__file__).resolve().parent.parent / "fixtures")

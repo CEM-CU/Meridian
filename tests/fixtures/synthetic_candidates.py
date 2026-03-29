@@ -6,7 +6,7 @@ Three candidates with distinct strength/gap profiles against the BMW CTO JD:
 - Kenji Tanaka: balanced, gap on scope, NO Big Five (partial mode)
 """
 
-from shared.models import BigFiveScores, CandidateData
+from meridian.models import BigFiveScores, CandidateData
 
 # ---------------------------------------------------------------------------
 # Candidate A — Marcus Chen
