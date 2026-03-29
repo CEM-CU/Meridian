@@ -1,6 +1,6 @@
 # Stage D — Task List
 
-> last_updated: 2026-03-29T00:00:00Z by claude (D2 complete)
+> last_updated: 2026-03-29T09:00:00Z by agent (D integration test complete — all Stage D tasks DONE)
 
 ## Overview
 
@@ -36,7 +36,7 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
   - On any violation: strip flag, log, continue
 - **Tests:** Valid flags pass through unchanged. Flag with invalid name → stripped. Flag with missing requirement_id → stripped. Flag with mismatched priority metadata → stripped.
 
-### D3: Merge [NOT STARTED]
+### D3: Merge [DONE]
 - **Blocked by:** D1 + D2
 - **Input:** personality flags + validated CV flags
 - **Output:** merged list[Flag] (personality first, then CV — deterministic ordering)
@@ -47,7 +47,7 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
   - A candidate might have 6 personality + 8 CV = 14 flags. This is correct — different evidence streams
 - **Tests:** Merge preserves all flags from both streams. Order is personality-first. Empty personality stream (partial mode) → CV-only output.
 
-### D4: Validation Layer 0 (5 Checks) [NOT STARTED]
+### D4: Validation Layer 0 (5 Checks) [DONE]
 - **Blocked by:** D3
 - **Input:** merged flag set + Big Five scores + requirement list + rubric assessments
 - **Output:** validated flag set + warnings list + coherence notes
@@ -71,7 +71,7 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
   - Mode flows into agent prompt preambles (Stage E) and provenance header
 - **Tests:** Candidate with all 5 scores → full. Candidate missing any dimension → partial. Preset → full with correct provenance string.
 
-### D6: Output Assembly [NOT STARTED]
+### D6: Output Assembly [DONE]
 - **Blocked by:** D3 + D4 + D5
 - **Input:** validated flags + mode per candidate + all upstream data
 - **Output:** StageDOutput (the contract Stage E consumes)
@@ -80,8 +80,17 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
   - Pass through: confirmed_requirements, candidate_data (with raw CV text), rubric_matrix, scenario
 - **Tests:** StageDOutput validates against Pydantic schema. All pass-through fields present. Provenance counts match actual flag counts.
 
-### D Integration Test [NOT STARTED]
+### D Integration Test [DONE]
 - **Blocked by:** D1-D6
 - **Input:** Mock StageCOutput (from fixtures)
 - **Output:** Valid StageDOutput
 - **Checks:** Flag count in expected range, no validation errors, correct assessment mode per candidate, provenance metadata consistent
+- **Implementation:** `stages/stage_d/tests/test_integration.py` — 6 test classes, 21 test methods, 21 passing.
+  - Builds StageCOutput from shared models only (no Stage C imports): 3 candidates (2 full, 1 partial), 10 requirements, 24 rubric assessments.
+  - `_run_stage_d_pipeline()` helper wires D1→D2→D3→D4→D5→D6 in sequence.
+  - Test 1: full pipeline structure + passthrough fidelity.
+  - Test 2: Pydantic round-trip (model_dump → model_validate).
+  - Test 3: provenance arithmetic consistency (personality + cv == total, total == actual flat list count).
+  - Test 4: partial mode — no personality flags, big_five_available=False, assessment_mode=PARTIAL.
+  - Test 5: scenario switch (digital_transformation vs turnaround) produces different flag sets.
+  - Test 6: D4 Check 1 and Check 2 remove zero flags on clean input; flag counts in expected range.

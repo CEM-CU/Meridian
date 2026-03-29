@@ -1,6 +1,6 @@
 # Project Status
 
-> last_updated: 2026-03-29T05:00:00Z by agent (C3 CV rubric assessment complete)
+> last_updated: 2026-03-29T09:00:00Z by agent (D integration test complete)
 
 ## Overall
 
@@ -42,11 +42,11 @@ Active worktrees: none
 |---|---|---|---|
 | Personality flag derivation (Big Five thresholds) | DONE | shared models | 1.5h |
 | CV flag stream validation | DONE | C4 output format | 0.25h |
-| Merge (concatenation + ordering) | NOT STARTED | personality flags + CV validation | 0.25h |
-| Validation Layer 0 (5 checks) | NOT STARTED | merge | 0.75h |
+| Merge (concatenation + ordering) | DONE | personality flags + CV validation | 0.25h |
+| Validation Layer 0 (5 checks) | DONE | merge | 0.75h |
 | Assessment mode determination | DONE | shared models | 0.25h |
-| Output assembly (StageDOutput) | NOT STARTED | all above | 0.25h |
-| D integration test | NOT STARTED | all above | 0.25h |
+| Output assembly (StageDOutput) | DONE | all above | 0.25h |
+| D integration test | DONE | all above | 0.25h |
 
 ## Stage E — Multi-Agent Evaluation + Synthesis
 
