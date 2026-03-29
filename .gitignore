@@ -6,4 +6,6 @@ dist/
 .ruff_cache/
 .pyright/
 .pytest_cache/
+.hypothesis/
+.coverage
 uv.lock
