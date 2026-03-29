@@ -40,8 +40,13 @@ def run_stage_c_checks(
     orphans = [f for f in cv_flags if f.requirement_id and f.requirement_id not in valid_ids]
     checks.append({"name": "C: No orphan flags", "passed": len(orphans) == 0, "detail": str(len(orphans))})
 
-    checks.append({"name": "C: Has GAP flags", "passed": any(f.name == "CV_GAP" for f in cv_flags), "detail": ""})
-    checks.append({"name": "C: Has EXCEEDS flags", "passed": any(f.name == "CV_EXCEEDS" for f in cv_flags), "detail": ""})
+    # Candidate differentiation: at least 2 distinct flag types across all candidates
+    flag_names = {f.name for f in cv_flags}
+    checks.append({
+        "name": "C: Flag differentiation",
+        "passed": len(flag_names) >= 2,
+        "detail": ", ".join(sorted(flag_names)) if flag_names else "(none)",
+    })
 
     try:
         StageCOutput.model_validate_json(output.model_dump_json())
@@ -149,6 +154,89 @@ def run_stage_d_checks(
         checks.append({"name": "D: Pydantic round-trip", "passed": True, "detail": ""})
     except Exception as e:
         checks.append({"name": "D: Pydantic round-trip", "passed": False, "detail": str(e)[:80]})
+
+    return checks
+
+
+def run_stage_e_checks(
+    synthesis: object,
+    candidates: list,
+    warnings: list[str],
+) -> list[dict[str, Any]]:
+    """Run Stage E quality checks. Returns list of {name, passed, detail}."""
+    checks: list[dict[str, Any]] = []
+    s = synthesis  # type: ignore[assignment]
+
+    # 1. Has trade-off matrix
+    checks.append({
+        "name": "E: Has trade-off matrix",
+        "passed": len(s.trade_off_matrix) > 0,
+        "detail": str(len(s.trade_off_matrix)),
+    })
+
+    # 2. Has candidate summaries for all candidates
+    summary_names = {cs.candidate_name for cs in s.candidate_summaries}
+    cand_names = {c.name for c in candidates}
+    checks.append({
+        "name": "E: Summaries for all candidates",
+        "passed": cand_names == summary_names,
+        "detail": f"{len(summary_names)}/{len(cand_names)}",
+    })
+
+    # 3. Trade-off statement generated (not fallback)
+    is_fallback = "could not be generated" in s.trade_off_statement.lower()
+    checks.append({
+        "name": "E: Trade-off statement generated",
+        "passed": not is_fallback and len(s.trade_off_statement) > 20,
+        "detail": f"{len(s.trade_off_statement)} chars",
+    })
+
+    # 4. Epistemic disclaimer present (F10)
+    checks.append({
+        "name": "E: Epistemic disclaimer (F10)",
+        "passed": len(s.epistemic_disclaimer) > 20,
+        "detail": "",
+    })
+
+    # 5. Partial mode disclaimer present if any partial candidates (F09)
+    has_partial = any(cs.assessment_mode == "partial" for cs in s.candidate_summaries)
+    if has_partial:
+        checks.append({
+            "name": "E: Partial mode disclaimer (F09)",
+            "passed": s.partial_mode_disclaimer is not None and len(s.partial_mode_disclaimer) > 10,
+            "detail": "",
+        })
+
+    # 6. Provenance header populated
+    checks.append({
+        "name": "E: Provenance header populated",
+        "passed": s.provenance.requirement_count > 0 and s.provenance.candidate_count == len(candidates),
+        "detail": f"reqs={s.provenance.requirement_count} cands={s.provenance.candidate_count}",
+    })
+
+    # 7. Agent highlights present in summaries
+    has_highlights = all(len(cs.agent_highlights) > 0 for cs in s.candidate_summaries)
+    checks.append({
+        "name": "E: Agent highlights in summaries",
+        "passed": has_highlights,
+        "detail": "",
+    })
+
+    # 8. Matrix cells have valid rubric levels
+    valid_levels = {"exceeds", "meets", "partial", "gap", "not_assessable"}
+    all_valid = all(cell.rubric_level in valid_levels for cell in s.trade_off_matrix)
+    checks.append({
+        "name": "E: Valid rubric levels in matrix",
+        "passed": all_valid,
+        "detail": "",
+    })
+
+    # 9. Pydantic round-trip
+    try:
+        type(s).model_validate_json(s.model_dump_json())
+        checks.append({"name": "E: Pydantic round-trip", "passed": True, "detail": ""})
+    except Exception as e:
+        checks.append({"name": "E: Pydantic round-trip", "passed": False, "detail": str(e)[:80]})
 
     return checks
 

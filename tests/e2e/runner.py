@@ -1,4 +1,4 @@
-"""Scenario execution logic — runs Stage C → Stage D pipeline and collects metrics."""
+"""Scenario execution logic — runs Stage C → D → E pipeline and collects metrics."""
 
 from __future__ import annotations
 
@@ -9,8 +9,9 @@ from rich.progress import Progress, TaskID
 from stage_c.pipeline import run_stage_c
 from stage_c.schemas import C1_REQUIREMENTS_SCHEMA, C3_ASSESSMENTS_SCHEMA
 from stage_d.pipeline import run_stage_d
+from stage_e.pipeline import run_stage_e
 
-from e2e.checks import run_stage_c_checks, run_stage_d_checks
+from e2e.checks import run_stage_c_checks, run_stage_d_checks, run_stage_e_checks
 from e2e.registry import load_scenario
 
 # Models that support OpenAI-style structured outputs via response_format.
@@ -81,17 +82,29 @@ async def run_scenario(
         d_checks = run_stage_d_checks(stage_d_output, candidates)
         result["stage_d_checks"] = d_checks
 
+        # --- Stage E ---
+        progress.update(task_id, description=f"[cyan]{name}[/] Stage E (agents)...")
+        t2 = time.time()
+        synthesis, e_warnings = await run_stage_e(stage_d_output, client)
+        e_elapsed = time.time() - t2
+        result["stage_e_latency_s"] = round(e_elapsed, 1)
+        result["stage_e_warnings"] = e_warnings
+
+        # Stage E checks
+        e_checks = run_stage_e_checks(synthesis, candidates, e_warnings)
+        result["stage_e_checks"] = e_checks
+
         # Combined metrics
-        total_elapsed = c_elapsed + d_elapsed
+        total_elapsed = c_elapsed + d_elapsed + e_elapsed
         result["latency_s"] = round(total_elapsed, 1)
-        all_checks = c_checks + d_checks
+        all_checks = c_checks + d_checks + e_checks
         passed = sum(1 for c in all_checks if c["passed"])
         result["checks"] = all_checks
         result["checks_passed"] = passed
         result["checks_total"] = len(all_checks)
 
         # Extract detailed metrics
-        result.update(_extract_metrics(stage_c_output, cv_flags, stage_d_output, candidates))
+        result.update(_extract_metrics(stage_c_output, cv_flags, stage_d_output, synthesis, candidates))
 
         result["status"] = "passed" if passed == len(all_checks) else "partial"
         progress.update(
@@ -112,11 +125,13 @@ def _extract_metrics(
     stage_c_output: object,
     cv_flags: list,
     stage_d_output: object,
+    synthesis: object,
     candidates: list,
 ) -> dict[str, Any]:
-    """Extract structured metrics from both Stage C and D outputs."""
+    """Extract structured metrics from Stage C, D, and E outputs."""
     sc = stage_c_output  # type: ignore[assignment]
     sd = stage_d_output  # type: ignore[assignment]
+    se = synthesis  # type: ignore[assignment]
 
     cv_reqs = [r for r in sc.requirements if r.assessable_from_cv]
     beh_reqs = [r for r in sc.requirements if not r.assessable_from_cv]
@@ -160,6 +175,9 @@ def _extract_metrics(
         "assessments_total": len(sc.rubric_assessments),
         "cv_flags_total": len(cv_flags),
         "d_flags_total": len(sd.flags),
+        "e_matrix_cells": len(se.trade_off_matrix),
+        "e_contested_signals": len(se.contested_signals),
+        "e_trade_off_statement_len": len(se.trade_off_statement),
         "per_candidate": per_candidate,
         "requirements_detail": [
             {"id": r.requirement_id, "text": r.text, "assessable": r.assessable_from_cv}

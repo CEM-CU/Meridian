@@ -47,14 +47,13 @@ def parse_args() -> argparse.Namespace:
 def print_summary(console: Console, results: list[dict]) -> None:
     """Print Rich summary table + per-candidate detail + failed checks."""
     # Main table
-    table = Table(title="Results Summary (Stage C + D)")
+    table = Table(title="Results Summary (Stage C + D + E)")
     table.add_column("Scenario", style="cyan")
     table.add_column("Status", justify="center")
     table.add_column("Checks", justify="center")
     table.add_column("Reqs", justify="center")
-    table.add_column("Assess", justify="center")
-    table.add_column("CV Flags", justify="center")
     table.add_column("D Flags", justify="center")
+    table.add_column("Matrix", justify="center")
     table.add_column("Time", justify="right")
 
     for r in results:
@@ -64,9 +63,8 @@ def print_summary(console: Console, results: list[dict]) -> None:
         table.add_row(
             r["scenario"], status, checks,
             str(r.get("requirements_total", "-")),
-            str(r.get("assessments_total", "-")),
-            str(r.get("cv_flags_total", "-")),
             str(r.get("d_flags_total", "-")),
+            str(r.get("e_matrix_cells", "-")),
             f"{r.get('latency_s', 0):.0f}s",
         )
 
