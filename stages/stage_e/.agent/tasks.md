@@ -1,6 +1,6 @@
 # Stage E — Task List
 
-> last_updated: 2026-03-29T16:00:00Z by agent (E5 done)
+> last_updated: 2026-03-29T18:30:00Z by agent (E8 done)
 
 ## Overview
 
@@ -74,7 +74,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - Check 8 (F14): Downweight ratio. If agent downweights >50% of its in-mandate flags → warning. Applies to both personality and CV flags
 - **Tests:** Each check tested independently with crafted inputs. F04 catches numerical discrepancy in citation. F05 catches personality claim on CV evidence. F07 enforces cap. F14 fires at >50% threshold.
 
-### E6: Layer 3b — Self-Consistency [NOT STARTED]
+### E6: Layer 3b — Self-Consistency [DONE]
 - **Blocked by:** E5
 - **Input:** full pipeline function + scenario
 - **Output:** instability annotations per candidate
@@ -85,7 +85,7 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - If any candidate's ranking changes across runs → instability annotation in output
 - **Tests:** Deterministic mock → consistent across runs. Intentionally varied mock → instability detected.
 
-### E7: Synthesis Template [NOT STARTED]
+### E7: Synthesis Template [DONE]
 - **Blocked by:** E5
 - **Input:** audited agent verdicts + signal labels + risk bands + rubric matrix + provenance
 - **Output:** structured synthesis document (3 progressive layers)
@@ -100,13 +100,20 @@ Stage E is the evaluation engine. Takes Stage D's validated flag set, runs 3 ind
   - Contested signal callouts (F12): same flag + different agent valence, cross-stream contests (CV evidence of strength + personality risk on same domain)
 - **Tests:** Template assembles with all sections present. Partial mode shows correct disclaimers. Contested signals detected and formatted.
 
-### E8: Scenario Switch Wiring [NOT STARTED]
+### E8: Scenario Switch Wiring [DONE]
 - **Blocked by:** E7
 - **Implementation:**
   - C3 results cached. On switch: C2 re-apply priorities → C4 re-bridge → D re-derive → E re-evaluate
   - Pre-compute both demo scenarios during setup. Scenario switch swaps cached output with 2s theatrical delay
   - Live switch: ~10-13s (3 agent calls + 1 synthesis call)
-- **Tests:** Two scenarios produce different outputs from same input. Cached output matches live computation.
+  - Implemented in `stages/stage_e/src/stage_e/scenario_switch.py`
+  - `CachedPipelineState` holds C1+C3 results (scenario-independent)
+  - `ScenarioResult` packages all outputs for one scenario
+  - `build_cached_state` runs C1+C3 once
+  - `evaluate_scenario` runs C2→C4→D→E using cached state
+  - `precompute_scenarios` builds cache once, evaluates all scenarios concurrently via asyncio.gather
+  - `switch_scenario` is a thin wrapper over `evaluate_scenario` for live mode
+- **Tests:** 6 tests all passing in `stages/stage_e/tests/test_scenario_switch.py`. ruff + pyright: 0 errors.
 
 ### E9: Timeout + Graceful Degradation (F16) [DONE]
 - **Blocked by:** E3
