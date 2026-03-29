@@ -11,3 +11,4 @@ dist/
 .claude/
 .orchestrator/
 uv.lock
+tests/e2e/results*.json
