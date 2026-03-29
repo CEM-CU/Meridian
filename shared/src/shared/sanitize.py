@@ -47,7 +47,7 @@ _DASH_SEQUENCE_PATTERN: re.Pattern[str] = re.compile(r"-{3,}")
 
 # XML-like system/instruction tags
 _SYSTEM_TAG_PATTERN: re.Pattern[str] = re.compile(
-    r"</?(?:system|instructions?|prompt|context|override)\b[^>]*>",
+    r"</?(?:system|instructions?|prompt|context|override|cv_text)\b[^>]*>",
     re.IGNORECASE,
 )
 

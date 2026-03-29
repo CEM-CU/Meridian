@@ -8,4 +8,6 @@ dist/
 .pytest_cache/
 .hypothesis/
 .coverage
+.claude/
+.orchestrator/
 uv.lock
