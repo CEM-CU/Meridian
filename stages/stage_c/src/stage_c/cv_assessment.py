@@ -25,7 +25,7 @@ from shared.models import (
 )
 
 if TYPE_CHECKING:
-    from stage_c.jd_extraction import LLMClient
+    from stage_c.protocols import LLMClient
 
 from stage_c.prompts.cv_assessment import build_cv_assessment_prompt
 from stage_c.text_utils import strip_markdown_fences
@@ -74,8 +74,12 @@ def parse_assessment_response(
     except json.JSONDecodeError as exc:
         raise ValueError(f"Invalid JSON in CV assessment response: {exc}") from exc
 
+    # Handle structured output wrapper: {"assessments": [...]}
+    if isinstance(parsed, dict) and "assessments" in parsed:
+        parsed = parsed["assessments"]
+
     if not isinstance(parsed, list):
-        raise ValueError(f"Expected JSON array from CV assessment, got {type(parsed).__name__}")
+        raise ValueError(f"Expected JSON array (or {{assessments: [...]}}), got {type(parsed).__name__}")
 
     assessments: list[RubricAssessment] = []
     for idx, item in enumerate(parsed):
@@ -85,6 +89,10 @@ def parse_assessment_response(
         # Inject candidate_name if LLM omitted it (common when batching).
         if "candidate_name" not in item or not item["candidate_name"]:
             item = {**item, "candidate_name": candidate_name}
+
+        # Default null confidence to "high" — some models omit confidence for gap/not_assessable.
+        if item.get("confidence") is None:
+            item = {**item, "confidence": "high"}
 
         try:
             assessments.append(RubricAssessment.model_validate(item))
@@ -228,6 +236,7 @@ async def assess_candidate(
     requirements: list[Requirement],
     priority_order: list[tuple[Requirement, Priority]],
     llm_client: LLMClient,
+    response_format: dict | None = None,
 ) -> list[RubricAssessment]:
     """Assess one candidate against all CV-assessable requirements.
 
@@ -251,7 +260,9 @@ async def assess_candidate(
         priority_order=priority_order,
     )
 
-    raw_response = await llm_client.complete(system=system_prompt, user=user_prompt)
+    raw_response = await llm_client.complete(
+        system=system_prompt, user=user_prompt, response_format=response_format
+    )
     logger.info(
         "LLM response received for CV assessment: candidate=%s, response_chars=%d",
         candidate_name,
@@ -259,11 +270,22 @@ async def assess_candidate(
     )
 
     requirement_ids = [r.requirement_id for r in requirements]
+    valid_ids = set(requirement_ids)
     assessments = parse_assessment_response(raw_response, candidate_name, requirement_ids)
     assessments, citation_warnings = enforce_citations(assessments)
 
     for w in citation_warnings:
         logger.warning("Citation enforcement: %s", w)
+
+    # Strip assessments for requirement IDs not in the input list (LLM hallucination).
+    pre_filter_count = len(assessments)
+    assessments = [a for a in assessments if a.requirement_id in valid_ids]
+    if len(assessments) < pre_filter_count:
+        logger.warning(
+            "Filtered %d hallucinated requirement ID(s) for candidate=%s",
+            pre_filter_count - len(assessments),
+            candidate_name,
+        )
 
     # Drop detection: check all required IDs are present in the response.
     assessed_ids = {a.requirement_id for a in assessments}
@@ -330,6 +352,7 @@ async def assess_all_candidates(
     requirements: list[Requirement],
     scenario: ScenarioConfig,
     llm_client: LLMClient,
+    response_format: dict | None = None,
 ) -> list[RubricAssessment]:
     """Assess all candidates in parallel (asyncio.gather).
 
@@ -342,6 +365,7 @@ async def assess_all_candidates(
         requirements: Full requirement list from C1 (may include behavioral reqs).
         scenario: Active ScenarioConfig — used to resolve per-requirement priority.
         llm_client: Async LLM client.
+        response_format: Optional structured output schema for OpenAI-compatible models.
 
     Returns:
         Flat list of RubricAssessment covering every (candidate x cv_assessable_req) pair.
@@ -367,6 +391,7 @@ async def assess_all_candidates(
             requirements=cv_assessable,
             priority_order=priority_order,
             llm_client=llm_client,
+            response_format=response_format,
         )
         for candidate in candidates
     ]

@@ -430,9 +430,11 @@ _VALID_CV_EVIDENCE_TYPES = {
 
 @st.composite
 def assessment_and_req_strategy(draw: st.DrawFn) -> tuple[list[RubricAssessment], list[Requirement], ScenarioName]:
-    """Generate a random set of assessments with matching requirements."""
+    """Generate a random set of assessments with matching requirements and multiple candidates."""
     scenario = draw(_scenario_strategy)
     n_reqs = draw(st.integers(min_value=1, max_value=10))
+    n_candidates = draw(st.integers(min_value=1, max_value=3))
+    candidate_names = ["Alice", "Bob", "Carol"][:n_candidates]
     reqs: list[Requirement] = []
     assessments: list[RubricAssessment] = []
     for i in range(1, n_reqs + 1):
@@ -448,14 +450,16 @@ def assessment_and_req_strategy(draw: st.DrawFn) -> tuple[list[RubricAssessment]
         )
         reqs.append(req)
 
-        level = draw(_rubric_level_strategy)
-        confidence = draw(_confidence_strategy)
-        assessment = _make_assessment(
-            req_id=req_id,
-            level=level,
-            confidence=confidence,
-        )
-        assessments.append(assessment)
+        for candidate in candidate_names:
+            level = draw(_rubric_level_strategy)
+            confidence = draw(_confidence_strategy)
+            assessment = _make_assessment(
+                req_id=req_id,
+                candidate=candidate,
+                level=level,
+                confidence=confidence,
+            )
+            assessments.append(assessment)
 
     return assessments, reqs, scenario
 
@@ -510,6 +514,19 @@ class TestEdgeCases:
     def test_empty_assessments(self) -> None:
         flags = bridge_rubric_to_flags([], [], _DEFAULT_SCENARIO)
         assert flags == []
+
+    def test_orphan_requirement_id_skipped(self) -> None:
+        """Assessment referencing a requirement_id not in the list is silently skipped."""
+        reqs = [_make_requirement(req_id="REQ-01", priority=Priority.HIGH)]
+        assessments = [
+            _make_assessment(req_id="REQ-01", level=RubricLevel.GAP),
+            _make_assessment(req_id="REQ-99", level=RubricLevel.GAP),  # orphan
+        ]
+        flags = bridge_rubric_to_flags(assessments, reqs, _DEFAULT_SCENARIO)
+        assert all(f.requirement_id != "REQ-99" for f in flags)
+        gap_flags = [f for f in flags if f.name == "CV_GAP"]
+        assert len(gap_flags) == 1
+        assert gap_flags[0].requirement_id == "REQ-01"
 
     def test_multiple_candidates(self) -> None:
         """Pattern flags fire per candidate, not globally."""

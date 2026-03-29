@@ -31,7 +31,7 @@ class MockLLMClient:
         self.call_count = 0
         self.calls: list[tuple[str, str]] = []
 
-    async def complete(self, system: str, user: str) -> str:
+    async def complete(self, system: str, user: str, response_format: dict | None = None) -> str:
         """Return the next canned response and record the call."""
         self.calls.append((system, user))
         response = self.responses[self.call_count % len(self.responses)]

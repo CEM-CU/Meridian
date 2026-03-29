@@ -234,6 +234,14 @@ class TestEnforceCitations:
         enforce_citations([a])
         assert a.rubric_level == original_level  # original unchanged
 
+    def test_empty_string_citation_treated_as_missing(self) -> None:
+        """MEETS with cv_citation="" (empty string) is downgraded like None."""
+        a = make_rubric_assessment(level=RubricLevel.MEETS, cv_citation="", cv_location="")
+        corrected, warnings = enforce_citations([a])
+        assert corrected[0].rubric_level == RubricLevel.GAP
+        assert len(warnings) == 1
+        assert "CITATION_MISSING" in warnings[0]
+
     def test_mixed_assessments_only_violators_downgraded(self) -> None:
         """Only assessments missing citations are downgraded; others pass through."""
         good = make_rubric_assessment("REQ-01", level=RubricLevel.MEETS, cv_citation="Evidence A")
@@ -347,6 +355,28 @@ class TestAssessCandidate:
             llm_client=client,
         )
         assert result[0].rubric_level == RubricLevel.GAP
+
+    @pytest.mark.asyncio
+    async def test_extra_requirement_ids_filtered(self) -> None:
+        """LLM returns assessments for IDs not in input → filtered out."""
+        reqs = [make_requirement("REQ-01", "Req one")]
+        priority_order = [(reqs[0], Priority.HIGH)]
+
+        data = [
+            make_assessment_dict("REQ-01", "Alice", "meets", "high", "Evidence", "Role"),
+            make_assessment_dict("REQ-99", "Alice", "exceeds", "high", "Hallucinated", "Role"),
+        ]
+        client = MockLLMClient([json.dumps(data)])
+
+        result = await assess_candidate(
+            candidate_name="Alice",
+            cv_text="CV text",
+            requirements=reqs,
+            priority_order=priority_order,
+            llm_client=client,
+        )
+        assert len(result) == 1
+        assert result[0].requirement_id == "REQ-01"
 
 
 # ---------------------------------------------------------------------------

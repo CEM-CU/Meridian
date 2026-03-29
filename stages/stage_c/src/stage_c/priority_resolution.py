@@ -31,6 +31,6 @@ def resolve_active_priorities(
         if not req.assessable_from_cv:
             result.append((req, None))
         else:
-            priority = req.scenario_priority.for_scenario(scenario.name)
+            priority = req.scenario_priority.for_scenario(scenario.name.value)
             result.append((req, priority))
     return result

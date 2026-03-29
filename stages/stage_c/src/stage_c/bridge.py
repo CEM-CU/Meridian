@@ -181,10 +181,15 @@ def _map_individual_flags(
     req_lookup: dict[str, Requirement],
     scenario_name: ScenarioName,
 ) -> list[Flag]:
-    """Apply per-assessment mapping rules to produce individual flags."""
+    """Apply per-assessment mapping rules to produce individual flags.
+
+    Assessments referencing unknown requirement IDs are silently skipped.
+    """
     flags: list[Flag] = []
     for assessment in assessments:
-        requirement = req_lookup[assessment.requirement_id]
+        requirement = req_lookup.get(assessment.requirement_id)
+        if requirement is None:
+            continue
         flag = _map_single_assessment(assessment, requirement, scenario_name)
         if flag is not None:
             flags.append(flag)

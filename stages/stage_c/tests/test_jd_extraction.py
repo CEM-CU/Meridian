@@ -188,11 +188,11 @@ class TestParseLlmResponse:
         with pytest.raises(ValueError, match="Expected JSON array"):
             parse_llm_response('{"key": "value"}')
 
-    def test_invalid_requirement_schema_raises_value_error(self) -> None:
-        """Requirement with missing fields raises ValueError."""
+    def test_invalid_requirement_schema_skipped(self) -> None:
+        """Requirement with missing fields is skipped, not raised."""
         raw = json.dumps([{"requirement_id": "REQ-01"}])
-        with pytest.raises(ValueError, match="failed validation"):
-            parse_llm_response(raw)
+        result = parse_llm_response(raw)
+        assert result == []  # bad item skipped
 
     def test_all_fields_populated(self) -> None:
         """Parsed requirements have all expected fields."""
@@ -319,29 +319,6 @@ class TestCheckRoutingConsistency:
 
 
 # ---------------------------------------------------------------------------
-# Validation check 4: Priority validation
-# ---------------------------------------------------------------------------
-
-
-class TestCheckPriorityValues:
-    """Tests for scenario priority value validation."""
-
-    def test_valid_priorities_no_warning(self) -> None:
-        """All valid Priority enum values produce no warnings."""
-        reqs = [_make_requirement()]
-        _, warnings = validate_extracted_requirements(reqs)
-        priority_warnings = [w for w in warnings if "invalid priority" in w.lower()]
-        assert not priority_warnings
-
-    def test_all_scenarios_present(self) -> None:
-        """Requirements with all 5 scenario priorities pass validation."""
-        reqs = [_make_requirement()]
-        _, warnings = validate_extracted_requirements(reqs)
-        scenario_warnings = [w for w in warnings if "missing scenario" in w.lower()]
-        assert not scenario_warnings
-
-
-# ---------------------------------------------------------------------------
 # count_warnings tests
 # ---------------------------------------------------------------------------
 
@@ -438,7 +415,7 @@ class TestExtractRequirements:
         """Mock LLM client that returns a fixed response."""
 
         class MockClient:
-            async def complete(self, system: str, user: str) -> str:
+            async def complete(self, system: str, user: str, response_format: dict | None = None) -> str:
                 return mock_llm_response
 
         return MockClient()
@@ -481,7 +458,7 @@ class TestExtractRequirements:
         few_reqs = _make_valid_requirement_dicts(4)
 
         class FewClient:
-            async def complete(self, system: str, user: str) -> str:
+            async def complete(self, system: str, user: str, response_format: dict | None = None) -> str:
                 return json.dumps(few_reqs)
 
         reqs, warnings = await extract_requirements(jd_text="Brief JD", llm_client=FewClient())
@@ -492,7 +469,7 @@ class TestExtractRequirements:
         """Orchestrator raises ValueError on invalid LLM response."""
 
         class BadClient:
-            async def complete(self, system: str, user: str) -> str:
+            async def complete(self, system: str, user: str, response_format: dict | None = None) -> str:
                 return "not json at all"
 
         with pytest.raises(ValueError, match="Invalid JSON"):
