@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from shared.models.candidates import CandidateData
 from shared.models.flags import Flag
@@ -19,6 +19,8 @@ class AssessmentMode(StrEnum):
 class FlagProvenance(BaseModel):
     """Per-candidate provenance metadata for the flag set."""
 
+    model_config = ConfigDict(extra="forbid")
+
     assessment_mode: AssessmentMode
     personality_flag_count: int = 0
     cv_flag_count: int = 0
@@ -34,6 +36,8 @@ class FlagProvenance(BaseModel):
 class StageCOutput(BaseModel):
     """Stage C → Stage D contract."""
 
+    model_config = ConfigDict(extra="forbid")
+
     requirements: list[Requirement]
     rubric_assessments: list[RubricAssessment]
     candidate_data: list[CandidateData]
@@ -42,6 +46,8 @@ class StageCOutput(BaseModel):
 
 class StageDOutput(BaseModel):
     """Stage D → Stage E contract."""
+
+    model_config = ConfigDict(extra="forbid")
 
     flags: list[Flag]
     provenance_per_candidate: dict[str, FlagProvenance]

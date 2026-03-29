@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Priority(StrEnum):
@@ -14,6 +14,8 @@ class Priority(StrEnum):
 class ScenarioPriority(BaseModel):
     """Per-requirement priority under each scenario. Assigned by LLM during C1 extraction."""
 
+    model_config = ConfigDict(extra="forbid")
+
     digital_transformation: Priority
     post_acquisition: Priority
     turnaround: Priority
@@ -21,11 +23,21 @@ class ScenarioPriority(BaseModel):
     growth: Priority
 
     def for_scenario(self, scenario_name: str) -> Priority:
+        """Get priority for a given scenario name.
+
+        Raises:
+            ValueError: If scenario_name is not a valid scenario.
+        """
+        valid_scenarios = set(ScenarioPriority.model_fields.keys())
+        if scenario_name not in valid_scenarios:
+            raise ValueError(f"Invalid scenario '{scenario_name}'; valid scenarios: {sorted(valid_scenarios)}")
         return getattr(self, scenario_name)
 
 
 class Requirement(BaseModel):
     """Single assessable requirement extracted from a JD."""
+
+    model_config = ConfigDict(extra="forbid")
 
     requirement_id: str = Field(description="Sequential ID: REQ-01 through REQ-N")
     text: str = Field(max_length=200, description="Normalized requirement statement")

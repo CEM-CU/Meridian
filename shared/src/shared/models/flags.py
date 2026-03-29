@@ -3,7 +3,7 @@
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class FlagCategory(StrEnum):
@@ -41,6 +41,8 @@ class EvidenceType(StrEnum):
 class Flag(BaseModel):
     """Single flag in the merged flag set. Both personality and CV-derived flags use this model."""
 
+    model_config = ConfigDict(extra="forbid")
+
     name: str
     candidate_name: str
     category: FlagCategory
@@ -57,6 +59,7 @@ class Flag(BaseModel):
     requirement_id: str | None = Field(default=None)
     rubric_level: str | None = Field(default=None)
     cv_citation: str | None = Field(default=None)
+    cv_location: str | None = Field(default=None, description="Role name, section, or paragraph reference from CV")
     confidence: str | None = Field(default=None)
     notes: str | None = Field(default=None)
     investigation_question: str | None = Field(default=None)

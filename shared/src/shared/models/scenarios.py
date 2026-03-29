@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ScenarioName(StrEnum):
@@ -16,6 +16,8 @@ class ScenarioName(StrEnum):
 class ScenarioConfig(BaseModel):
     """Active scenario. Priority per requirement is stored ON the requirement (ScenarioPriority),
     not in a global lookup table. This model carries the active scenario name and Layer 1 weight vectors."""
+
+    model_config = ConfigDict(extra="forbid")
 
     name: ScenarioName
     category_weights: dict[str, float] = Field(default_factory=dict, description="FlagCategory → weight for Layer 1")

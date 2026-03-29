@@ -105,6 +105,7 @@ Used by Stage D (producer) and Stage E (consumer). Full field list:
 | requirement_id | str | CV flags only | E agents (JD reference), E audit (F04, F05) |
 | rubric_level | str | CV flags only | E agents (must not override), E audit |
 | cv_citation | str | CV flags only | E agents (evidence reference), E F04 |
+| cv_location | str | CV flags only | E agents (CV section reference), E F04 |
 | confidence | str | CV flags only | D validation, E risk assessment |
 | notes | str | optional | E agents (context) |
 | investigation_question | str | optional | E synthesis (investigation questions collection) |

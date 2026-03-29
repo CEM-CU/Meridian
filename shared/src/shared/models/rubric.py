@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RubricLevel(StrEnum):
@@ -21,6 +21,8 @@ class Confidence(StrEnum):
 
 class RubricAssessment(BaseModel):
     """Single rubric evaluation: one requirement x one candidate."""
+
+    model_config = ConfigDict(extra="forbid")
 
     requirement_id: str
     candidate_name: str
