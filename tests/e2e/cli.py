@@ -28,7 +28,6 @@ from rich.console import Console  # noqa: E402
 from rich.panel import Panel  # noqa: E402
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn  # noqa: E402
 from rich.table import Table  # noqa: E402
-
 from shared.llm_client import OpenRouterClient  # noqa: E402
 
 from e2e.registry import SCENARIOS  # noqa: E402
@@ -48,13 +47,14 @@ def parse_args() -> argparse.Namespace:
 def print_summary(console: Console, results: list[dict]) -> None:
     """Print Rich summary table + per-candidate detail + failed checks."""
     # Main table
-    table = Table(title="Results Summary")
+    table = Table(title="Results Summary (Stage C + D)")
     table.add_column("Scenario", style="cyan")
     table.add_column("Status", justify="center")
     table.add_column("Checks", justify="center")
     table.add_column("Reqs", justify="center")
-    table.add_column("Assessments", justify="center")
-    table.add_column("Flags", justify="center")
+    table.add_column("Assess", justify="center")
+    table.add_column("CV Flags", justify="center")
+    table.add_column("D Flags", justify="center")
     table.add_column("Time", justify="right")
 
     for r in results:
@@ -65,7 +65,8 @@ def print_summary(console: Console, results: list[dict]) -> None:
             r["scenario"], status, checks,
             str(r.get("requirements_total", "-")),
             str(r.get("assessments_total", "-")),
-            str(r.get("flags_total", "-")),
+            str(r.get("cv_flags_total", "-")),
+            str(r.get("d_flags_total", "-")),
             f"{r.get('latency_s', 0):.0f}s",
         )
 
@@ -78,11 +79,13 @@ def print_summary(console: Console, results: list[dict]) -> None:
             continue
         console.print(f"\n[bold cyan]{r['scenario']}[/] candidates:")
         for cand_name, d in r["per_candidate"].items():
-            mode = "full" if d["has_big_five"] else "partial"
-            rubric = ", ".join(f"{k}={v}" for k, v in sorted(d["rubric"].items()))
-            flags = ", ".join(f"{k}={v}" for k, v in sorted(d["flags"].items())) or "(none)"
-            console.print(f"  [{mode:>7s}] {cand_name:25s} | {rubric}")
-            console.print(f"  {'':9s} {'':25s} | flags: {flags}")
+            mode = d.get("assessment_mode", "full" if d.get("has_big_five") else "partial")
+            rubric = ", ".join(f"{k}={v}" for k, v in sorted(d.get("rubric", {}).items()))
+            d_flags = ", ".join(f"{k}={v}" for k, v in sorted(d.get("d_flags", d.get("flags", {})).items())) or "(none)"
+            p_count = d.get("d_personality_flags", 0)
+            cv_count = d.get("d_cv_flags", d.get("flag_count", 0))
+            console.print(f"  [{mode:>7s}] {cand_name:25s} | rubric: {rubric}")
+            console.print(f"  {'':9s} {'':25s} | D flags: {d_flags} (p={p_count} cv={cv_count})")
 
     # Failed checks
     any_fail = False
