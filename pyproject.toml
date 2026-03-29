@@ -10,6 +10,7 @@ dependencies = [
     "stage-c",
     "stage-d",
     "stage-e",
+    "rich>=14.3.3",
 ]
 
 [tool.uv.sources]
@@ -48,6 +49,9 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "TCH", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/fixtures/scenarios/*.py" = ["E501", "RUF001", "RUF003"]
 
 [tool.pyright]
 pythonVersion = "3.12"

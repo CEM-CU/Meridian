@@ -1,6 +1,6 @@
 # Stage C — Task List
 
-> last_updated: 2026-03-29T05:30:00Z by agent (C3 complete)
+> last_updated: 2026-03-29T06:00:00Z by agent (C integration test complete)
 
 ## Overview
 
@@ -80,8 +80,15 @@ Stage C transforms raw JD and CV text into structured, typed, citable data. 4 LL
   - topic_keywords derived from requirement text vocabulary
 - **Tests:** Unit test every mapping rule. Property test: flag count ≤ requirement count + pattern flags. No flag references a non-existent requirement_id. All CV flags have valid evidence_type.
 
-### C Integration Test [NOT STARTED]
+### C Integration Test [DONE]
 - **Blocked by:** C1-C4 all complete
 - **Input:** Synthetic BMW CTO JD + 3 candidate CVs
 - **Output:** Verify full C1→C2→C3→C4 pipeline produces valid StageCOutput
 - **Checks:** All requirements extracted, all priorities assigned, all candidates assessed, all flags have valid provenance, flag count in expected range (6-10 per candidate)
+- **Implementation:** `stages/stage_c/tests/test_integration.py` — 5 tests, all passing
+  - `test_full_c1_through_c4_pipeline` — full pipeline smoke test
+  - `test_stage_c_output_validates_against_schema` — round-trip serialisation
+  - `test_flag_output_from_c4_is_valid` — C4 flag provenance + behavioral routing
+  - `test_priority_changes_affect_flags` — scenario switch produces different flags
+  - `test_citation_enforcement_in_pipeline` — MEETS without citation → GAP downgrade
+- **Note:** Added `stages/stage_c/tests/conftest.py` to re-expose root test fixtures for isolated test runs. Mock client (`_PipelineMockLLMClient`) dispatches on presence of "rubric" in system prompt.
