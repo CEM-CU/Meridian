@@ -33,8 +33,6 @@ _UNCONDITIONAL_CONTRADICTIONS: list[tuple[str, str]] = [
 _CONDITIONAL_CONTRADICTIONS: list[tuple[str, str]] = [
     ("CV_EXCEEDS", "CV_GAP"),
     ("CV_EXCEEDS", "CV_PARTIAL"),
-    ("CV_SCOPE_EXCEEDS", "CV_SCOPE_GAP"),
-    ("CV_EXCEEDS_HIGH_PRIORITY", "CV_GAP_HIGH_PRIORITY"),
 ]
 
 # Big Five dimension → personality flag category domain mapping for cross-stream check.
@@ -55,14 +53,8 @@ _CV_CATEGORY_DOMAIN: dict[FlagCategory, str] = {
 # CV flag names → rubric levels they must reference.
 _CV_FLAG_EXPECTED_RUBRIC: dict[str, str] = {
     "CV_GAP": RubricLevel.GAP,
-    "CV_GAP_HIGH_PRIORITY": RubricLevel.GAP,
-    "CV_GAP_MEDIUM_PRIORITY": RubricLevel.GAP,
     "CV_PARTIAL": RubricLevel.PARTIAL,
-    "CV_PARTIAL_HIGH_PRIORITY": RubricLevel.PARTIAL,
     "CV_EXCEEDS": RubricLevel.EXCEEDS,
-    "CV_EXCEEDS_HIGH_PRIORITY": RubricLevel.EXCEEDS,
-    "CV_SCOPE_EXCEEDS": RubricLevel.EXCEEDS,
-    "CV_SCOPE_GAP": RubricLevel.GAP,
 }
 
 BIG_FIVE_DIMENSIONS: tuple[str, ...] = ("O", "C", "E", "A", "N")

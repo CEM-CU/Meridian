@@ -326,6 +326,23 @@ class TestCheckMutualExclusivity:
         assert len(validated) == 1
         assert validated[0].name == "CULTURAL_EXTRAVERSION_FIT"
 
+    def test_same_valence_contradiction_removes_second_flag(self) -> None:
+        """Both flags negative → second flag removed (deterministic tiebreaker)."""
+        flag_a = _make_personality_flag(
+            name="EXECUTION_CONSCIENTIOUSNESS_FIT",
+            valence=Valence.NEGATIVE,
+            category=FlagCategory.EXECUTION,
+        )
+        flag_b = _make_personality_flag(
+            name="EXECUTION_LOW_CONSCIENTIOUSNESS_RISK",
+            valence=Valence.NEGATIVE,
+            category=FlagCategory.EXECUTION,
+        )
+        validated, warnings = check_mutual_exclusivity([flag_a, flag_b])
+        assert len(validated) == 1
+        assert validated[0] is flag_a
+        assert len(warnings) == 1
+
     def test_conditional_contradiction_same_requirement_removes_lower_confidence(self) -> None:
         """CV_EXCEEDS vs CV_GAP on SAME requirement_id → remove lower-confidence flag."""
         high_conf = _make_cv_flag(

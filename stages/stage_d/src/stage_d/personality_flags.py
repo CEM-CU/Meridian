@@ -154,10 +154,15 @@ def _check_direction(score: float, threshold: float, direction: str) -> bool:
 
     Boundary behavior: score exactly at threshold does NOT fire the flag.
     'above' requires strictly greater than; 'below' requires strictly less than.
+
+    Raises:
+        ValueError: If direction is not 'above' or 'below'.
     """
     if direction == "above":
         return score > threshold
-    return score < threshold
+    if direction == "below":
+        return score < threshold
+    raise ValueError(f"Invalid threshold direction: {direction!r}; expected 'above' or 'below'")
 
 
 def _check_team_condition(
@@ -182,8 +187,7 @@ def _check_team_condition(
 
 def _score_for_dimension(scores: BigFiveScores, dimension: str) -> float:
     """Extract a single dimension score from a BigFiveScores object."""
-    mapping: dict[str, float] = {"O": scores.O, "C": scores.C, "E": scores.E, "A": scores.A, "N": scores.N}
-    return mapping[dimension]
+    return getattr(scores, dimension)
 
 
 def _get_dimension_score(candidate: CandidateData, dimension: str) -> float:

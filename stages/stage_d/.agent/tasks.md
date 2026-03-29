@@ -80,6 +80,11 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
   - Pass through: confirmed_requirements, candidate_data (with raw CV text), rubric_matrix, scenario
 - **Tests:** StageDOutput validates against Pydantic schema. All pass-through fields present. Provenance counts match actual flag counts.
 
+### D Pipeline Orchestrator [DONE]
+- **Input:** StageCOutput + cv_flags (from C4 bridge)
+- **Output:** StageDOutput
+- **Implementation:** `stages/stage_d/src/stage_d/pipeline.py` — `run_stage_d()` wires D1→D2→D3→D4→D5→D6.
+
 ### D Integration Test [DONE]
 - **Blocked by:** D1-D6
 - **Input:** Mock StageCOutput (from fixtures)
