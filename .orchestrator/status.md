@@ -1,6 +1,6 @@
 # Project Status
 
-> last_updated: 2026-03-29T16:00:00Z by agent (E5 Layer 3 audit done — 8 checks, runner, 44 tests)
+> last_updated: 2026-03-29T21:00:00Z by agent (A4 SSE review fixes — 10 issues fixed: task leak, CancelledError, timeouts, evidence_types, per_candidate provenance, signal labels/bands/tensions, agent summary+evidence_types+unaddressed, full SynthesisOutput in SYNTHESIS_COMPLETE, event ordering test, test file split; 88 tests passing; ruff + pyright clean)
 
 ## Overall
 
@@ -57,10 +57,10 @@ Active worktrees: none
 | Layer 2: Agent prompts × 3 (mode-aware) | DONE | Layer 1 | 2h |
 | Layer 2: JSON output schemas | DONE | shared models | 0.5h |
 | Layer 3: Audit (8 checks) | DONE | Layer 2 | 2h |
-| Layer 3b: Self-consistency pre-computation | NOT STARTED | Layer 3 | 0.75h |
-| Synthesis template (trade-off matrix + 3-layer output) | NOT STARTED | Layer 3 | 1.5h |
-| Synthesis trade-off statement (1 LLM call) | NOT STARTED | synthesis template | 0.25h |
-| Scenario switch wiring | NOT STARTED | all above | 0.5h |
+| Layer 3b: Self-consistency pre-computation | DONE | Layer 3 | 0.75h |
+| Synthesis template (trade-off matrix + 3-layer output) | DONE | Layer 3 | 1.5h |
+| Synthesis trade-off statement (1 LLM call) | DONE | synthesis template | 0.25h |
+| Scenario switch wiring | DONE | E8 — scenario_switch.py, 6 tests | 0.5h |
 | Timeout + graceful degradation (F16) | DONE | Layer 2 | 0.25h |
 | E integration test | NOT STARTED | all above | 0.5h |
 
@@ -73,6 +73,14 @@ Active worktrees: none
 | Big Five presets (5 archetypes) | DONE | tests/fixtures/big_five_presets.py — 5 archetypes |
 | conftest.py fixtures | DONE | tests/conftest.py — 9 fixtures + 12 requirements + 30 rubric assessments |
 | Expected flag outputs (golden) | NOT STARTED | after D is built |
+
+## API Layer
+
+| Component | Status | Notes |
+|---|---|---|
+| A1: FastAPI skeleton | DONE | api/app.py — GET /health, CORS, lifespan stub; 2 tests passing |
+| A3: SSE event schema + stream helpers | DONE | api/sse/events.py (19 event types, 19 payload models, PAYLOAD_MODELS map) + api/sse/stream.py (format_sse_event, sse_response_generator); 39 tests passing |
+| A4: Pipeline SSE Wrapper | DONE (reviewed) | api/sse/pipeline_stream.py — 10 review fixes applied: task leak guard, CancelledError handling, wait_for timeouts on C1+synthesis, evidence_types breakdown, per_candidate provenance in STAGE_D_COMPLETE, signal_labels+risk_bands+tensions in SIGNALS_COMPUTED, summary+evidence_types+unaddressed_flags in AGENT_COMPLETE, full SynthesisOutput fields in SYNTHESIS_COMPLETE; api/sse/events.py updated accordingly; api/tests/_pipeline_fixtures.py extracted; ordering test added; 88 tests passing |
 
 ## Parallelization Windows
 
