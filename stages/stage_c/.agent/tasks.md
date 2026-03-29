@@ -1,6 +1,6 @@
 # Stage C — Task List
 
-> last_updated: 2026-03-29T02:00:00Z by agent (C1 complete)
+> last_updated: 2026-03-29T05:30:00Z by agent (C3 complete)
 
 ## Overview
 
@@ -27,7 +27,7 @@ Stage C transforms raw JD and CV text into structured, typed, citable data. 4 LL
     4. Priority override: verify all scenario_priority values are valid (high/medium/low only)
 - **Tests:** Mock LLM response → validate all 4 checks fire correctly. Property test: output always has sequential IDs, valid priorities per scenario, boolean assessable_from_cv.
 
-### C2: Active Priority Resolution [NOT STARTED]
+### C2: Active Priority Resolution [DONE]
 - **Blocked by:** C1 (needs requirement list)
 - **Input:** list[Requirement] from C1 + ScenarioConfig (active scenario name)
 - **Output:** list[tuple[Requirement, Priority]] — each requirement paired with its priority under the active scenario
@@ -40,7 +40,7 @@ Stage C transforms raw JD and CV text into structured, typed, citable data. 4 LL
   - **Much simpler than the old C2** — no lookup table, no type classification. Just a field read
 - **Tests:** Same requirements, different scenario → different active priorities. Behavioral requirement → routes regardless.
 
-### C3: CV Rubric Assessment [NOT STARTED]
+### C3: CV Rubric Assessment [DONE]
 - **Blocked by:** C1 (needs requirement list with types for routing)
 - **Input:** list[Requirement] (CV-assessable only) + raw CV text per candidate
 - **Output:** list[RubricAssessment] per candidate

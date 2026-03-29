@@ -1,6 +1,6 @@
 # Stage D — Task List
 
-> last_updated: 2026-03-29T00:00:00Z by claude (D5 complete)
+> last_updated: 2026-03-29T00:00:00Z by claude (D2 complete)
 
 ## Overview
 
@@ -23,7 +23,7 @@ Stage D converts raw signals (Big Five scores + CV rubric assessments) into a un
 - **Key design decision:** Define thresholds as a config dict, not hardcoded. Makes tuning easy without code changes. Structure: `{scenario: {dimension: {flag_name: threshold_value, direction: "above"|"below"}}}`
 - **Tests:** For each scenario × dimension, verify correct flag fires at boundary. Test with scores exactly at threshold (boundary behavior). Test without team context → no complementarity/collision flags. Test without Big Five → empty list + partial mode.
 
-### D2: CV Flag Stream Validation [NOT STARTED]
+### D2: CV Flag Stream Validation [DONE]
 - **Blocked by:** C4 output format (Flag model)
 - **Input:** list[Flag] from C4 bridge
 - **Output:** list[Flag] (validated, potentially stripped of invalid flags)

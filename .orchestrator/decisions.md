@@ -1,6 +1,6 @@
 # Architectural Decisions Log
 
-> last_updated: 2026-03-29T04:00:00Z by agent (F18 sanitization)
+> last_updated: 2026-03-29T06:00:00Z by agent (llm_client.py)
 
 ## Format
 
@@ -19,6 +19,8 @@ Each entry: `[DATE] DECISION: <what>. RATIONALE: <why>. FILES CHANGED: <list>. D
 [2026-03-29] DECISION: Git worktrees per feature within stage, not per stage. Branch naming: feat/<stage>/<component>. RATIONALE: Finer parallelization granularity. Multiple features within a stage can be developed concurrently. FILES CHANGED: None (convention). DOWNSTREAM IMPACT: More branches to manage — orchestrator tracks active worktrees.
 
 [2026-03-29] DECISION: LLM integration tests hit DeepSeek/OpenRouter (cheap), not Anthropic. Marked @pytest.mark.integration, skipped by default. RATIONALE: Cost control + speed. Prompt+schema+parsing validation doesn't need the production model. FILES CHANGED: pytest config, test markers. DOWNSTREAM IMPACT: Integration tests may behave differently than production — note prompt sensitivity.
+
+[2026-03-29] DECISION: Concrete LLM client lives in shared, not in stage_c. AnthropicClient + MockLLMClient added to shared/src/shared/llm_client.py. Both satisfy the LLMClient Protocol (runtime_checkable) defined in stage_c.jd_extraction. httpx added as a dependency of the shared package. RATIONALE: Stage E will also need LLM calls — centralising the client in shared avoids duplication and ensures all stages use the same retry/error surface. MockLLMClient is in the same file for test locality. FILES CHANGED: shared/src/shared/llm_client.py (new), shared/tests/test_llm_client.py (new), shared/pyproject.toml (httpx added), .env.example (new at repo root). DOWNSTREAM IMPACT: Stage C and Stage E should import AnthropicClient from shared.llm_client rather than defining their own HTTP logic.
 
 [2026-03-29] DECISION: Stage C rubric assessments are scenario-independent, cached after initial run. Scenario switch re-runs C2 priority mapping → C4 bridge → D → E only. RATIONALE: The expensive LLM calls (C1+C3) run once. Scenario switch latency ~10-13s instead of ~60s. FILES CHANGED: Pipeline orchestration logic. DOWNSTREAM IMPACT: C3 output must NOT contain scenario-dependent information.
 

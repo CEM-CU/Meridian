@@ -16,6 +16,7 @@ from typing import Protocol, runtime_checkable
 from shared.models import Priority, Requirement, ScenarioName
 
 from stage_c.prompts.jd_extraction import build_jd_extraction_prompt
+from stage_c.text_utils import strip_markdown_fences
 
 logger = logging.getLogger(__name__)
 
@@ -172,7 +173,7 @@ def parse_llm_response(raw_json: str) -> list[Requirement]:
     Raises:
         ValueError: If JSON is invalid or doesn't match the Requirement schema.
     """
-    cleaned = _strip_markdown_fences(raw_json)
+    cleaned = strip_markdown_fences(raw_json)
     try:
         parsed = json.loads(cleaned)
     except json.JSONDecodeError as exc:
@@ -189,17 +190,6 @@ def parse_llm_response(raw_json: str) -> list[Requirement]:
             raise ValueError(f"Requirement at index {idx} failed validation: {exc}") from exc
 
     return requirements
-
-
-def _strip_markdown_fences(text: str) -> str:
-    """Remove markdown code fences (```json ... ```) if present."""
-    stripped = text.strip()
-    if stripped.startswith("```"):
-        newline_pos = stripped.find("\n")
-        stripped = "" if newline_pos == -1 else stripped[newline_pos + 1 :]
-    if stripped.endswith("```"):
-        stripped = stripped[:-3]
-    return stripped.strip()
 
 
 # ---------------------------------------------------------------------------

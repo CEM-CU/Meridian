@@ -1,6 +1,6 @@
 # Project Status
 
-> last_updated: 2026-03-29T04:00:00Z by agent (F18 sanitization complete)
+> last_updated: 2026-03-29T05:00:00Z by agent (C3 CV rubric assessment complete)
 
 ## Overall
 
@@ -12,7 +12,8 @@ Active worktrees: none
 
 | Component | Status | Notes |
 |---|---|---|
-| sanitize.py | DONE | sanitize_for_prompt — F18 prompt injection prevention; used by stage_c jd_extraction, must also be applied to C3 CV rubric prompt when implemented |
+| sanitize.py | DONE | sanitize_for_prompt — F18 prompt injection prevention; used by stage_c jd_extraction and C3 cv_assessment |
+| llm_client.py | DONE | AnthropicClient (httpx + Anthropic Messages API) + MockLLMClient; satisfies LLMClient Protocol; 14 tests passing; ruff + pyright clean |
 
 ## Shared Models
 
@@ -30,8 +31,8 @@ Active worktrees: none
 | Task | Status | Blocked By | Est. Hours |
 |---|---|---|---|
 | C1: JD extraction prompt + schema + validation | DONE | shared models | 0.5h |
-| C2: Active priority resolution (scenario read) | NOT STARTED | C1 | 0.05h |
-| C3: CV rubric assessment prompt + schema + drop detection | NOT STARTED | C1 (needs requirement list) | 0.75h |
+| C2: Active priority resolution (scenario read) | DONE | C1 | 0.05h |
+| C3: CV rubric assessment prompt + schema + drop detection | DONE | C1 (needs requirement list) | 0.75h |
 | C4: Rubric-to-flag bridge (deterministic) | DONE | shared models (Flag) | 0.4h |
 | C integration test | NOT STARTED | C1-C4 | 0.25h |
 
@@ -40,7 +41,7 @@ Active worktrees: none
 | Task | Status | Blocked By | Est. Hours |
 |---|---|---|---|
 | Personality flag derivation (Big Five thresholds) | DONE | shared models | 1.5h |
-| CV flag stream validation | NOT STARTED | C4 output format | 0.25h |
+| CV flag stream validation | DONE | C4 output format | 0.25h |
 | Merge (concatenation + ordering) | NOT STARTED | personality flags + CV validation | 0.25h |
 | Validation Layer 0 (5 checks) | NOT STARTED | merge | 0.75h |
 | Assessment mode determination | DONE | shared models | 0.25h |
